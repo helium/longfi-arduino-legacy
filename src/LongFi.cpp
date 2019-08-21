@@ -55,9 +55,10 @@ static BoardBindings_t ArduinoBindings  = {
 
 static volatile bool DIO0FIRED = false;
 
-LongFi::LongFi(RadioType radio, int cs, int dio0)
+LongFi::LongFi(RadioType radio, int reset, int cs, int dio0)
     : _cs(cs)
     , _dio0(dio0)
+    , _rst(reset)
     {
         switch (radio)
         {   
@@ -83,6 +84,11 @@ void dio0_callback(){
 void LongFi::init(uint32_t oui, uint16_t device_id){
     // start the SPI library
     SPI.begin();
+
+    digitalWrite(this->_rst, LOW);
+    delay(1000);
+    digitalWrite(this->_rst, HIGH);
+    delay(1000);
 
     RfConfig_t config = {
         .oui = oui,
