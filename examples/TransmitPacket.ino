@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <SPI.h>
-#include "ArduinoLongFi.h"
+#include "LongFi.h"
 
 // set OUI and device_id to work with LongFi routing
 const uint32_t oui = 1234;
