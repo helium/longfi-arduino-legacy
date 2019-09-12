@@ -1,8 +1,0 @@
-# ignore all the test tooling
-tests/autom4te.cache/
-tests/configure
-tests/test-lib/
-tests/test-obj/
-tests/longfi_tests
-*.o
-*.d
