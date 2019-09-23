@@ -44,10 +44,10 @@ Gpio_t DbgPinRx;
 
 void SX126xIoInit( void )
 {
-    GpioInit( &SX126x.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
-    GpioInit( &SX126x.BUSY, RADIO_BUSY, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &SX126x.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    GpioInit( &DeviceSel, RADIO_DEVICE_SEL, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+    GpioInit( &SX126x.Spi.Nss, RADIO_NSS, LF_PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+    GpioInit( &SX126x.BUSY, RADIO_BUSY, LF_PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+    GpioInit( &SX126x.DIO1, RADIO_DIO_1, LF_PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+    GpioInit( &DeviceSel, RADIO_DEVICE_SEL, LF_PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 }
 
 void SX126xIoIrqInit( DioIrqHandler dioIrq )
@@ -83,9 +83,9 @@ uint32_t SX126xGetBoardTcxoWakeupTime( void )
 void SX126xReset( void )
 {
     DelayMs( 10 );
-    GpioInit( &SX126x.Reset, RADIO_RESET, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+    GpioInit( &SX126x.Reset, LF_RADIO_RESET, LF_PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
     DelayMs( 20 );
-    GpioInit( &SX126x.Reset, RADIO_RESET, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 ); // internal pull-up
+    GpioInit( &SX126x.Reset, LF_RADIO_RESET, PIN_ANALOGIC, PIN_PUSH_PULL, PIN_NO_PULL, 0 ); // internal pull-up
     DelayMs( 10 );
 }
 
@@ -259,7 +259,7 @@ uint8_t SX126xGetDeviceId( void )
 
 void SX126xAntSwOn( void )
 {
-    GpioInit( &AntPow, RADIO_ANT_SWITCH_POWER, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+    GpioInit( &AntPow, RADIO_ANT_SWITCH_POWER, LF_PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
 }
 
 void SX126xAntSwOff( void )
