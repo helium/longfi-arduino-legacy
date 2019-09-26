@@ -16,8 +16,8 @@ const uint16_t device_id = 99;
 
 // MCCI Catena 4610
 const uint8_t RADIO_RESET_PIN = RADIO_RESET;
-const uint8_t RADIO_TCXO_PIN  = RADIO_TCXO;
-const uint8_t RADIO_DIO_0_PIN = RADIO_DIO_0;
+const uint8_t RADIO_TCXO_PIN  = 33;
+const uint8_t RADIO_DIO_0_PIN = 25;
 const uint8_t RADIO_MOSI_PIN  = RADIO_MOSI;
 const uint8_t RADIO_MISO_PIN  = RADIO_MISO;
 const uint8_t RADIO_SS_PIN    = RADIO_SS;
