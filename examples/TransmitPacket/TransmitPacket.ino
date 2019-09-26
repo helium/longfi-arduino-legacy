@@ -33,8 +33,16 @@ void setup() {
   pinMode(RADIO_TCXO_PIN, OUTPUT);
   pinMode(RADIO_RESET_PIN, OUTPUT);
 
-  // Init LongFi
-  LongFi.init(oui, device_id);
+  // Enable TCXO  
+  digitalWrite(RADIO_TCXO_PIN, HIGH);
+  digitalWrite(RADIO_RESET_PIN, LOW);
+  delay(1);
+  digitalWrite(RADIO_RESET_PIN, HIGH);
+  delay(6);
+  LongFi.enable_tcxo();
+  digitalWrite(RADIO_RESET_PIN, LOW);
+  delay(1);
+  digitalWrite(RADIO_RESET_PIN, HIGH);
 }
 
 uint8_t data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
