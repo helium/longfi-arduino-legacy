@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include "longfi-device/longfi.h"
 
+
 class LongFi
 {
   public:
@@ -17,6 +18,7 @@ class LongFi
     };
 
     LongFi(RadioType radio, int reset, int cs, int dio0);
+    void enable_tcxo(void);
     void init(uint32_t oui, uint16_t device_id);
     void send(const uint8_t * data, size_t len);
     void set_buffer(uint8_t * buf, size_t len);
