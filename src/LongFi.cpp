@@ -10,7 +10,7 @@
 static int CS_PIN;
 static int DIO0_PIN;
 extern "C" {
-uint16_t ArduinoSpiInOut(Spi_t *s, uint16_t outData){
+uint16_t ArduinoSpiInOut(LF_Spi_t *s, uint16_t outData){
     return SPI.transfer(outData);
 }
 
@@ -18,7 +18,7 @@ void ArduinoDelayMs(uint32_t ms){
     delay(ms);
 }
 
-void ArduinoGpioInit(Gpio_t *obj,
+void ArduinoGpioInit(LF_Gpio_t *obj,
               PinNames pin,
               PinModes mode,
               PinConfigs config,
@@ -27,7 +27,7 @@ void ArduinoGpioInit(Gpio_t *obj,
 
 
 
-void ArduinoGpioWrite(Gpio_t *obj, uint32_t val){
+void ArduinoGpioWrite(LF_Gpio_t *obj, uint32_t val){
     if (val == 0) {
         digitalWrite(CS_PIN, LOW);
     } else {
@@ -35,12 +35,12 @@ void ArduinoGpioWrite(Gpio_t *obj, uint32_t val){
     }
 }
 
-uint32_t ArduinoGpioRead(Gpio_t *obj){
+uint32_t ArduinoGpioRead(LF_Gpio_t *obj){
     return 0;
 }
 
 
-void ArduinoGpioSetInterrupt(Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority, GpioIrqHandler *irqHandler){
+void ArduinoGpioSetInterrupt(LF_Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority, GpioIrqHandler *irqHandler){
 }
 }
 
@@ -104,6 +104,10 @@ void LongFi::init(uint32_t oui, uint16_t device_id){
     longfi_init(&_handle);
 
 };
+
+void LongFi::enable_tcxo(void){
+    longfi_enable_tcxo(&_handle);
+}
 
 //blocks until done
 void LongFi::send(const uint8_t * data, size_t len){   

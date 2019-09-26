@@ -23,19 +23,19 @@ static bool RadioIsActive = false;
 /*!
  * Antenna switch GPIO pins objects
  */
-Gpio_t AntSwitchLf;
-Gpio_t AntSwitchHf;
+LF_Gpio_t AntSwitchLf;
+LF_Gpio_t AntSwitchHf;
 
 void SX1276IoInit( void )
 {
-    // GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+    // GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, LF_PIN_PUSH_PULL, PIN_PULL_UP, 1 );
 
-    // GpioInit( &SX1276.DIO0, RADIO_DIO_0, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-    // GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-    // GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-    // GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-    // GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
-    // GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    // GpioInit( &SX1276.DIO0, RADIO_DIO_0, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    // GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    // GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    // GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    // GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    // GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_PULL_UP, 0 );
 }
 
 void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
@@ -51,14 +51,14 @@ void SX1276IoIrqInit( DioIrqHandler **irqHandlers )
 
 void SX1276IoDeInit( void )
 {
-    // GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, PIN_PUSH_PULL, PIN_NO_PULL, 1 );
+    // GpioInit( &SX1276.Spi.Nss, RADIO_NSS, PIN_OUTPUT, LF_PIN_PUSH_PULL, PIN_NO_PULL, 1 );
 
-    // GpioInit( &SX1276.DIO0, RADIO_DIO_0, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    // GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    // GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    // GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    // GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
-    // GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+    // GpioInit( &SX1276.DIO0, RADIO_DIO_0, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+    // GpioInit( &SX1276.DIO1, RADIO_DIO_1, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+    // GpioInit( &SX1276.DIO2, RADIO_DIO_2, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+    // GpioInit( &SX1276.DIO3, RADIO_DIO_3, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+    // GpioInit( &SX1276.DIO4, RADIO_DIO_4, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_NO_PULL, 0 );
+    // GpioInit( &SX1276.DIO5, RADIO_DIO_5, PIN_INPUT, LF_PIN_PUSH_PULL, PIN_NO_PULL, 0 );
 }
 
 uint8_t SX1276GetPaSelect( uint32_t channel )
@@ -92,8 +92,8 @@ void SX1276SetAntSwLowPower( bool status )
 
 void SX1276AntSwInit( void )
 {
-    // GpioInit( &AntSwitchLf, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 1 );
-    // GpioInit( &AntSwitchHf, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, PIN_PUSH_PULL, PIN_PULL_UP, 0 );
+    // GpioInit( &AntSwitchLf, RADIO_ANT_SWITCH_LF, PIN_OUTPUT, LF_PIN_PUSH_PULL, PIN_PULL_UP, 1 );
+    // GpioInit( &AntSwitchHf, RADIO_ANT_SWITCH_HF, PIN_OUTPUT, LF_PIN_PUSH_PULL, PIN_PULL_UP, 0 );
 }
 
 void SX1276AntSwDeInit( void )
@@ -166,6 +166,8 @@ void SX1276SetRfTxPower( int8_t power ){
     //     }
     // }
 
+    // SX1276Write( REG_PACONFIG, paConfig );
+
     //Pa maximum power
     SX1276Write(SX1276_REG_PACONFIG, 0xFF);
     
@@ -176,7 +178,8 @@ void SX1276SetRfTxPower( int8_t power ){
     SX1276Write(SX1276_REG_PADAC, 0x9F);
     
     //Set RegOcp 240ma
-    SX1276Write(SX1276_REG_OCP, 0x3B); 
+    SX1276Write(SX1276_REG_OCP, 0x3B);
+
 }
 
 void SX1276SetBoardTcxo(bool enable){}
