@@ -32,7 +32,7 @@ File -> Examples -> LongFi -> TransmitPacket
 Arduino IDE:  
 Select Tools -> Upload Method -> DFU  
 
-To put the board in DFU mode, hold down the boot button while preasing and releasing the reset button.
+To put the board in DFU mode, hold down the boot button while pressing and releasing the reset button.
 
 ### ST-Link (Flash & Debug)
 Arduino IDE:  
