@@ -4,7 +4,7 @@ env:
     - CLI_VERSION=0.5.0
   matrix:
     - DISCO_BOARD="STM32:stm32:Disco:pnum=DISCO_L072CZ_LRWAN1,opt=osstd,rtlib=nano"
-    - CATENA_BOARD=mcci:stm32:mcci_catena_4610"
+    - CATENA_BOARD="mcci:stm32:mcci_catena_4610"
 before_install:
   - wget https://github.com/arduino/arduino-cli/releases/download/0.5.0/arduino-cli_0.5.0_Linux_64bit.tar.gz
   - tar -xf arduino-cli_0.5.0_Linux_64bit.tar.gz 
