@@ -105,8 +105,21 @@ void LongFi::init(uint32_t oui, uint16_t device_id){
 
 };
 
-void LongFi::enable_tcxo(void){
-    longfi_enable_tcxo(&_handle);
+void LongFi::enable_tcxo(int tcxo_pin){
+    // Setup Pins for TCXO Enable
+    pinMode(tcxo_pin, OUTPUT);
+    pinMode(this->_rst, OUTPUT);
+
+    // Enable TCXO  
+    digitalWrite(tcxo_pin, HIGH);
+    digitalWrite(this->_rst, LOW);
+    delay(1);
+    digitalWrite(this->_rst, HIGH);
+    delay(6);
+    longfi_enable_tcxo(&_handle); 
+    digitalWrite(this->_rst, LOW);
+    delay(1);
+    digitalWrite(this->_rst, HIGH);
 }
 
 //blocks until done
