@@ -1,13 +1,23 @@
-# LongFi
+# LongFi Arduino
 
 This arduino library supports radio communication with Semtech compatible radios using the Helium LongFi Protocol.
 
 ## Board Support
-The example sketch currently only works with the MCCI Catena 4610 board. 
-It currently requires MCCI's Catena Board support package. Please
-follow instructions to install [here](https://github.com/mcci-catena/Arduino_Core_STM32#getting-started). 
 
-Next select "MCCI Catena 4610" from Tools -> Boards -> MCCI Catena 4610.
+### B-L072Z-LRWAN1 - ST STM32L0 Discovery kit  
+Install board support package, find instructions [here](https://github.com/stm32duino/Arduino_Core_STM32#getting-started).  
+
+Arduino IDE:  
+1. Select Tools -> Board: -> Discovery 
+2. Select Tools -> Board part number: -> Discovery L072Z-LRWAN1 
+
+[B-L072Z-LRWAN1 User Manual](https://www.st.com/content/ccc/resource/technical/document/user_manual/group0/ac/62/15/c7/60/ac/4e/9c/DM00329995/files/DM00329995.pdf/jcr:content/translations/en.DM00329995.pdf)  
+
+### Catena 4610 - MCCI  
+Install board support package, find instructions [here](https://github.com/mcci-catena/Arduino_Core_STM32#getting-started). 
+
+Arduino IDE:  
+Select Tools -> Board: -> MCCI Catena 4610.  
 
 [Catena 4610 Pin Mapping Diagram](https://github.com/mcci-catena/HW-Designs/blob/master/Boards/Catena-4610/Catena-4610-Pinmapping.png)
 
