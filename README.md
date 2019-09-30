@@ -36,15 +36,27 @@ mac os: Documents/Arduino/libraries
 Arduino IDE:  
 File -> Examples -> LongFi -> TransmitPacket  
 
-## Programming
+## Programming(Upload Method):
 
-### DFU (Flashing Only)
+### B-L072Z-LRWAN1 - ST STM32L0 Discovery kit 
+
+#### STM32CubeProgrammer(SWD)
+Will use onboard ST-Link(Flasher/Debugger) to upload sketch.  
+Download and Install required utility from ST [here](https://www.st.com/en/development-tools/stm32cubeprog.html).  
+
+Arduino IDE:  
+Select Tools -> Upload Method -> STM32CubeProgrammer(SWD)
+
+
+### Catena 4610 - MCCI 
+
+#### DFU
 Arduino IDE:  
 Select Tools -> Upload Method -> DFU  
 
 To put the board in DFU mode, hold down the boot button while pressing and releasing the reset button.
 
-### ST-Link (Flash & Debug)
+#### ST-Link
 Arduino IDE:  
 Select Tools -> Upload Method -> STLink
 
