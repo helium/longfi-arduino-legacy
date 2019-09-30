@@ -3,8 +3,8 @@ env:
   global:
     - CLI_VERSION=0.5.0
   matrix:
-    - DISCO_BOARD="STM32:stm32:Disco:pnum=DISCO_L072CZ_LRWAN1,opt=osstd,rtlib=nano"
-    - CATENA_BOARD="mcci:stm32:mcci_catena_4610"
+    - BOARD="STM32:stm32:Disco:pnum=DISCO_L072CZ_LRWAN1,opt=osstd,rtlib=nano"
+    - BOARD="mcci:stm32:mcci_catena_4610"
 before_install:
   - wget https://github.com/arduino/arduino-cli/releases/download/0.5.0/arduino-cli_0.5.0_Linux_64bit.tar.gz
   - tar -xf arduino-cli_0.5.0_Linux_64bit.tar.gz 
@@ -15,8 +15,7 @@ before_install:
   - arduino-cli core install STM32:stm32 --additional-urls https://github.com/stm32duino/BoardManagerFiles/raw/master/STM32/package_stm_index.json
   - arduino-cli core update-index --additional-urls https://github.com/mcci-catena/arduino-boards/raw/master/BoardManagerFiles/package_mcci_index.json 
   - arduino-cli core install mcci:stm32 --additional-urls https://github.com/mcci-catena/arduino-boards/raw/master/BoardManagerFiles/package_mcci_index.json 
-  - buildExampleSketch() { arduino-cli compile --verbose --warnings all --fqbn $DISCO_BOARD $PWD/examples/$1; }
-  - buildExampleSketch() { arduino-cli compile --verbose --warnings all --fqbn $CATENA_BOARD $PWD/examples/$1; } 
+  - buildExampleSketch() { arduino-cli compile --verbose --warnings all --fqbn $BOARD $PWD/examples/$1; }
 install:
   - mkdir -p $HOME/Arduino/libraries
   - ln -s $PWD $HOME/Arduino/libraries/.
