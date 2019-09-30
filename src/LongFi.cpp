@@ -82,9 +82,7 @@ void dio0_callback(){
 }
 
 void LongFi::init(uint32_t oui, uint16_t device_id){
-    // start the SPI library
-    SPI.begin();
-
+    // Reset Radio 
     digitalWrite(this->_rst, LOW);
     delay(1000);
     digitalWrite(this->_rst, HIGH);
