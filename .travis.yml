@@ -15,6 +15,7 @@ before_install:
   - arduino-cli core install STM32:stm32 --additional-urls https://github.com/stm32duino/BoardManagerFiles/raw/master/STM32/package_stm_index.json
   - arduino-cli core update-index --additional-urls https://github.com/mcci-catena/arduino-boards/raw/master/BoardManagerFiles/package_mcci_index.json 
   - arduino-cli core install mcci:stm32 --additional-urls https://github.com/mcci-catena/arduino-boards/raw/master/BoardManagerFiles/package_mcci_index.json 
+  - ls /home/travis/.arduino15/packages/mcci/hardware/stm32/2.5.0/tools/linux/
   - buildExampleSketch() { arduino-cli compile --verbose --warnings all --fqbn $BOARD $PWD/examples/$1; }
 install:
   - mkdir -p $HOME/Arduino/libraries
