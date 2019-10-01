@@ -5,7 +5,7 @@ env:
   matrix:
     - BOARD="mcci:stm32:mcci_catena_4610"
 before_install:
-  - sudo dnf install glibc.i686
+  - sudo apt-get install libc6-i386
   - wget https://github.com/arduino/arduino-cli/releases/download/0.5.0/arduino-cli_0.5.0_Linux_64bit.tar.gz
   - tar -xf arduino-cli_0.5.0_Linux_64bit.tar.gz 
   - mkdir -p $HOME/bin
