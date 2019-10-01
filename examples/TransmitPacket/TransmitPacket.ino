@@ -46,7 +46,7 @@ void setup() {
   #endif
 }
 
-uint8_t data[8] = {1, 2, 3, 4, 5, 6, 9, 9};
+uint8_t data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 
 void loop() {
   Serial.print("sending: ");
