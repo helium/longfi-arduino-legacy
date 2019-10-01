@@ -1,4 +1,5 @@
-# LongFi Arduino
+# LongFi Arduino  
+[![Build Status](https://travis-ci.com/helium/longfi-arduino.svg?token=bzKc8EpW7xxqudyhDiz1&branch=master)](https://travis-ci.com/helium/longfi-arduino)
 
 This arduino library supports radio communication with Semtech compatible radios using the Helium LongFi Protocol.
 
