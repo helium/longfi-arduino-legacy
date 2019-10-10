@@ -40,8 +40,6 @@ void setup() {
   
   pinMode(buttonPin, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(buttonPin), push_button_ISR, HIGH);
-  
-  
 }
 
 void push_button_ISR(){
