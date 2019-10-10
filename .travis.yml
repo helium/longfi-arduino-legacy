@@ -22,4 +22,3 @@ install:
   - ln -s $PWD $HOME/Arduino/libraries/.
 script:
   - buildExampleSketch TransmitPacket
-  - buildExampleSketch ButtonTransmit 
