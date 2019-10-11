@@ -26,8 +26,8 @@ const uint8_t RADIO_SCLK_PIN  = RADIO_SCK;
 const uint8_t RADIO_SS_PIN    = RADIO_SS;
 #endif
 
-const uint8_t buttonPin =USER_BTN;
-static boolean button_pushed = false;
+const uint8_t buttonPin = USER_BTN;
+static boolean volatile button_pushed = false;
 
 LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
 
@@ -50,8 +50,6 @@ void setup() {
   
   pinMode(buttonPin, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(buttonPin), push_button_ISR, HIGH);
-  
-  
 }
 
 void push_button_ISR(){
@@ -62,12 +60,11 @@ uint8_t buf[128];
 uint8_t counter = 1;
 String message = "hello";
 void loop() {
+  String full_msg = "|" + String(counter) + ": " + message+ "|";
+  uint8_t msg_len = sizeof(full_msg) - 1;
+  full_msg.getBytes(buf, msg_len);
+  Serial.println("Button press #: "+String(counter));
   while(button_pushed) {
-
-      String full_msg = "|" + String(counter) + ": " + message+ "|";
-      uint8_t msg_len = sizeof(full_msg) - 1;
-      full_msg.getBytes(buf, msg_len);
-      Serial.println("Pressed buttons: "+String(counter));
       LongFi.send(buf, msg_len);
       noInterrupts();
       button_pushed = false;
