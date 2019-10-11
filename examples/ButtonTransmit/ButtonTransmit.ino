@@ -3,8 +3,8 @@
 #include "LongFi.h"
 
 // set OUI and device_id to work with LongFi routing
-const uint32_t oui = 1234;
-const uint16_t device_id = 99;
+const uint32_t oui = 1;
+const uint16_t device_id = 11;
 
 #ifdef _VARIANT_ARDUINO_STM32_
 // Discovery L072CZ-LRWAN1
@@ -14,6 +14,16 @@ const uint8_t RADIO_MOSI_PIN  = RADIO_MOSI_PORT;
 const uint8_t RADIO_MISO_PIN  = RADIO_MISO_PORT;
 const uint8_t RADIO_SCLK_PIN  = RADIO_SCLK_PORT;
 const uint8_t RADIO_SS_PIN    = RADIO_NSS_PORT;
+#endif
+#ifdef _VARIANT_ARDUINO_CATENA_461x_
+// MCCI Catena 4610
+const uint8_t RADIO_RESET_PIN = RADIO_RESET;
+const uint8_t RADIO_TCXO_PIN  = 33;
+const uint8_t RADIO_DIO_0_PIN = 25;
+const uint8_t RADIO_MOSI_PIN  = RADIO_MOSI;
+const uint8_t RADIO_MISO_PIN  = RADIO_MISO;
+const uint8_t RADIO_SCLK_PIN  = RADIO_SCK;
+const uint8_t RADIO_SS_PIN    = RADIO_SS;
 #endif
 
 const uint8_t buttonPin = USER_BTN;
@@ -46,11 +56,16 @@ void push_button_ISR(){
   button_pushed = true;
 }
 
+uint8_t buf[128];
 uint8_t counter = 1;
+String message = "hello";
 void loop() {
+  String full_msg = "|" + String(counter) + ": " + message+ "|";
+  uint8_t msg_len = sizeof(full_msg) - 1;
+  full_msg.getBytes(buf, msg_len);
+  Serial.println("Button press #: "+String(counter));
   while(button_pushed) {
-      Serial.println("Button press #: "+String(counter));
-      LongFi.send(&counter,sizeof(counter));
+      LongFi.send(buf, msg_len);
       noInterrupts();
       button_pushed = false;
       interrupts();
