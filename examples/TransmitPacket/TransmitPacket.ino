@@ -25,16 +25,24 @@ const uint8_t RADIO_MISO_PIN  = RADIO_MISO;
 const uint8_t RADIO_SCLK_PIN  = RADIO_SCK;
 const uint8_t RADIO_SS_PIN    = RADIO_SS;
 #endif
+#ifdef _VARIANT_ARDUINO_ZERO_
+// Adafruit Feather M0 Lora
+const uint8_t RADIO_RESET_PIN = 4;
+const uint8_t RADIO_DIO_0_PIN = 3;
+const uint8_t RADIO_SS_PIN    = 8;
+#endif
 
 LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
 
 void setup() {
   Serial.begin(9600);
 
+  #if defined(_VARIANT_ARDUINO_STM32_) || defined(_VARIANT_ARDUINO_CATENA_461x_) 
   SPI.setMOSI(RADIO_MOSI_PIN);
   SPI.setMISO(RADIO_MISO_PIN);
   SPI.setSCLK(RADIO_SCLK_PIN);
   SPI.setSSEL(RADIO_SS_PIN);
+  #endif
   SPI.begin();
 
   LongFi.init(oui, device_id);
