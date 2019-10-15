@@ -14,19 +14,9 @@ const uint8_t RADIO_MOSI_PIN  = RADIO_MOSI_PORT;
 const uint8_t RADIO_MISO_PIN  = RADIO_MISO_PORT;
 const uint8_t RADIO_SCLK_PIN  = RADIO_SCLK_PORT;
 const uint8_t RADIO_SS_PIN    = RADIO_NSS_PORT;
-#endif
-#ifdef _VARIANT_ARDUINO_CATENA_461x_
-// MCCI Catena 4610
-const uint8_t RADIO_RESET_PIN = RADIO_RESET;
-const uint8_t RADIO_TCXO_PIN  = 33;
-const uint8_t RADIO_DIO_0_PIN = 25;
-const uint8_t RADIO_MOSI_PIN  = RADIO_MOSI;
-const uint8_t RADIO_MISO_PIN  = RADIO_MISO;
-const uint8_t RADIO_SCLK_PIN  = RADIO_SCK;
-const uint8_t RADIO_SS_PIN    = RADIO_SS;
+const uint8_t USER_BUTTON     = USER_BTN;
 #endif
 
-const uint8_t buttonPin = USER_BTN;
 static boolean volatile button_pushed = false;
 
 LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
@@ -48,8 +38,8 @@ void setup() {
   LongFi.enable_tcxo(RADIO_TCXO_PIN);
   #endif
   
-  pinMode(buttonPin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(buttonPin), push_button_ISR, HIGH);
+  pinMode(USER_BUTTON, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(USER_BUTTON), push_button_ISR, HIGH);
 }
 
 void push_button_ISR(){

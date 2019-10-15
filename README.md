@@ -34,10 +34,11 @@ mac os: Documents/Arduino/libraries
 
 2. Restart Arduino IDE
 
-## Example Sketch
+## Example Sketches
 
 Arduino IDE:  
 File -> Examples -> LongFi -> TransmitPacket  
+File -> Examples -> LongFi -> ButtonTransmit (Only supported on B-L072Z-LRWAN1) 
 
 ## Programming(Upload Method):
 
