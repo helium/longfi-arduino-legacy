@@ -2,6 +2,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include "Timer.h"
 
 Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
 
@@ -12,17 +13,17 @@ Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
 #define INA219_CURRENT_REG 0X03
 #define INA219_CURRENT_REG 0X04
 #define INA219_CALIBRATION_REG 0X05
-#define pin  PA8
+
+Timer t;
 
 static volatile bool sample_almost_ready = false;
 static volatile bool screen_refresh = false;
 static bool state = false ; //false-voltage true-current
-void sample_almost_ready_ISR(HardwareTimer*) {
+void sample_almost_ready_ISR() {
   sample_almost_ready = true;
 }
-void screen_refresh_ISR(HardwareTimer*) {
-  screen_refresh = true;
-}
+
+
 
 void enter_Sleep( void )
 {
@@ -30,18 +31,13 @@ void enter_Sleep( void )
     __WFI();  // enter low-power mode
 }
 
-TIM_TypeDef *Instance = TIM2;
-TIM_TypeDef *Instance2 = TIM21;
-
-HardwareTimer *MyTim = new HardwareTimer(Instance);
-HardwareTimer *MyTim2 = new HardwareTimer(Instance2);
 
 void setup() {
   Wire.setSDA(PB9);
   Wire.setSCL(PB8);
   Wire.begin();        // join i2c bus (address optional for master)
 
-  
+  pinMode(LED_BUILTIN, OUTPUT);
   
   //delay(500);
   //Writing the configuration register
@@ -62,25 +58,18 @@ void setup() {
   Serial.println("Setup ready");
 
   //Timers configuration
-
-  
-
-  MyTim->setMode(2, TIMER_OUTPUT_COMPARE);  
-  MyTim->setOverflow(650, HERTZ_FORMAT); // 666 Hz
-  MyTim->attachInterrupt(sample_almost_ready_ISR);
-  MyTim->resume();
+  //t.oscillate(pin, 3, LOW);
+  t.every(200, sample_almost_ready_ISR);
 
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C); // Address 0x3C for 128x32
 
   Serial.println("OLED begun");
 
   display.display();
-  delay(1000);
+  
   display.clearDisplay();
   display.display();
-
-
-    display.setTextColor(WHITE);
+  display.setTextColor(WHITE);
 }
 
 unsigned char MSB_V = 0;
@@ -92,13 +81,14 @@ unsigned char LSB_C = 0;
 unsigned char counter = 0;
 void loop() {
   // read from the sensor
+  t.update();
   if (sample_almost_ready) {
-   
+    
     noInterrupts();
     sample_almost_ready = false;
     interrupts();
-     display.clearDisplay();
-     display.display();
+    display.clearDisplay();
+    digitalWrite(LED_BUILTIN,HIGH);
 
     Wire.beginTransmission(INA219_BASE_ADDR); // transmit to device
     Wire.write(INA219_BUS_VOLT_REG); //Adress of the result register
@@ -138,9 +128,12 @@ void loop() {
         display.print("-" + String(current) + "uA");
       }
     }
-    delay(10);
-    yield();
+    
     display.display();
+  }
+  else if(!sample_almost_ready){
+     digitalWrite(LED_BUILTIN,LOW);
+      __WFI();  
   }
   
 
