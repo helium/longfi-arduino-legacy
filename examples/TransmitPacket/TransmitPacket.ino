@@ -45,12 +45,12 @@ void setup() {
   #endif
   SPI.begin();
 
-  LongFi.init(oui, device_id);
+  //LongFi.init(oui, device_id);
   Serial.println("Setup Start");
 
   #ifdef _VARIANT_ARDUINO_CATENA_461x_
   // Enable TCXO On Catena Boards 
-  LongFi.enable_tcxo(RADIO_TCXO_PIN);
+  //LongFi.enable_tcxo(RADIO_TCXO_PIN);
   #endif
 }
 
@@ -60,6 +60,6 @@ void loop() {
   Serial.print("sending: ");
   Serial.println(data[0]);
   // send blocks until complete
-  LongFi.send(data, sizeof(data));
+  //LongFi.send(data, sizeof(data));
   data[0]++;
 }
