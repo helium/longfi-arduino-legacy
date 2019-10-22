@@ -15,12 +15,15 @@ class LongFi
       SX1276,
       SX1272,
     };
-
-    LongFi(RadioType radio, int reset, int cs, int dio0);
+    LongFi(RadioType radio, int reset, int nss, int dio0);
+    LongFi(RadioType radio, int reset, int nss, int dio0, int tcxo);
+    void init(uint32_t oui, uint16_t device_id);
+    void send(const uint8_t * data, size_t len);
   private:
-    int _cs;
+    int _nss;
     int _dio0;
     int _rst;
+    int _tcxo;
     Radio_t _radio;
     LongFi_t _handle;
 };

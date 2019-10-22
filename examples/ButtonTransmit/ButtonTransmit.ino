@@ -15,14 +15,14 @@ const uint8_t RADIO_MISO_PIN  = RADIO_MISO_PORT;
 const uint8_t RADIO_SCLK_PIN  = RADIO_SCLK_PORT;
 const uint8_t RADIO_SS_PIN    = RADIO_NSS_PORT;
 const uint8_t USER_BUTTON     = USER_BTN;
+LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
 #endif
 
 static boolean volatile button_pushed = false;
 
-LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
-
 void setup() {
   Serial.begin(9600);
+  Serial.println("Setup Start");
 
   SPI.setMOSI(RADIO_MOSI_PIN);
   SPI.setMISO(RADIO_MISO_PIN);
@@ -31,13 +31,8 @@ void setup() {
   SPI.begin();
 
   LongFi.init(oui, device_id);
-  Serial.println("Setup Start");
+  Serial.println("Setup Complete");
 
-  #ifdef _VARIANT_ARDUINO_CATENA_461x_
-  // Enable TCXO On Catena Boards 
-  LongFi.enable_tcxo(RADIO_TCXO_PIN);
-  #endif
-  
   pinMode(USER_BUTTON, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(USER_BUTTON), push_button_ISR, HIGH);
 }
