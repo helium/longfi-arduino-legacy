@@ -5,6 +5,7 @@
  * @file
  */
 
+#include "datagram.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -19,6 +20,11 @@ extern "C" {
 enum lfc_res {
     /** Success, no error. */
     lfc_res_ok,
+    /** Received datagram does not match configured OUI or DID. */
+    lfc_res_err_addr,
+    /** Received datagram's fingerprint does not match locally
+     * computed fingerprint. */
+    lfc_res_err_fingerprint,
     /** Generic, exceptional error. */
     lfc_res_err_exception,
     /** Provided buffer is too small for request. */
@@ -27,17 +33,6 @@ enum lfc_res {
     lfc_res_invalid_type,
     /** Invalid datagram flags. */
     lfc_res_invalid_flags,
-};
-
-/**
- * LongFi regulatory region.
- *
- * LongFi users are responsible for configuring their devices' region
- * in order to remain compliant with regulations.
- */
-enum lfc_region {
-    /** USA */
-    lfc_region_fcc,
 };
 
 /**
@@ -67,42 +62,35 @@ struct lfc {
 };
 
 /**
- * LoRa spreading factor.
- *
- * Low spreading factors spend less time on air but are more
- * susceptible to errors, where as large spreading factors are more
- * tolerant to noise but are slow to transmit.
- */
-enum lfc_sf {
-    sf_5  = 5,
-    sf_6  = 6,
-    sf_7  = 7,
-    sf_8  = 8,
-    sf_9  = 9,
-    sf_10 = 10,
-    sf_11 = 11,
-    sf_12 = 12,
-};
-
-/**
  * Initializes a user-provided `lfc` object.
  */
 void
 lfc_init(struct lfc * lfc, struct lfc_user_cfg cfg);
 
 /**
- * Push a received payload into the context.
- */
-void
-lfc_push_rx(struct lfc const * lfc, uint8_t const * pay, size_t pay_len);
-
-/**
- * Initializes and returns a transmit plan.
- *
+ * Decodes a datagram from `in` buffer.
  *
  * @param lfc               LongFi Context.
- * @param msg               Payload you want to send.
- * @param msg_len           Length of `pay`.
+ * @param in[in]            Buffer containing an encoded datagram.
+ * @param in_len            Length of `in`.
+ * @param out[out]          Buffer to write decoded payload to.
+ * @param[in,out] dg_len    in: capacity of `out` buffer.
+ *                          out: actual size of payload.
+ */
+enum lfc_res
+lfc_receive(struct lfc const * lfc,
+            uint8_t const *    in,
+            size_t             in_len,
+            uint8_t *          out,
+            size_t *           out_len);
+
+/**
+ * Creates and encodes a datagram into the provided `out` buffer from
+ * `pay`.
+ *
+ * @param lfc               LongFi Context.
+ * @param pay               Payload you want to send.
+ * @param pay_len           Length of `pay`.
  * @param out               Buffer to serialize datagram into.
  * @param[in,out] dg_len    in: capacity of `out` buffer.
  *                          out: actual serialized size of datagram.
