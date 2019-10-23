@@ -45,11 +45,11 @@ uint8_t buf[128];
 uint8_t counter = 1;
 String message = "hello";
 void loop() {
-  String full_msg = "|" + String(counter) + ": " + message+ "|";
-  uint8_t msg_len = sizeof(full_msg) - 1;
-  full_msg.getBytes(buf, msg_len);
-  Serial.println("Button press #: "+String(counter));
   while(button_pushed) {
+      String full_msg = "|" + String(counter) + ": " + message+ "|";
+      uint8_t msg_len = sizeof(full_msg) - 1;
+      full_msg.getBytes(buf, msg_len);
+      Serial.println("Button press #: "+String(counter));
       LongFi.send(buf, msg_len);
       noInterrupts();
       button_pushed = false;
