@@ -1,6 +1,3 @@
-#ifndef __LONGFIP_H__
-#define __LONGFIP_H__
-
 #include "longfi.h"
 #include "radio/radio.h"
 
@@ -142,5 +139,3 @@ extern "C"
 #ifdef __cplusplus
 }
 #endif
-
-#endif // __LONGFIP_H__
