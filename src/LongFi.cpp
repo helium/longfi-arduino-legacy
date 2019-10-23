@@ -150,7 +150,7 @@ void dio0_callback(){
 
 void LongFi::init(uint32_t oui, uint16_t device_id){
 
-    union LongFiAuthCallbacks auth_cb = {.get_preshared_key = GetPresharedKey};
+    union LongFiAuthCallbacks auth_cb = {.preshared_key = preshared_key};
 
     LongFiConfig_t lf_config = {
         .oui = oui,
@@ -158,7 +158,7 @@ void LongFi::init(uint32_t oui, uint16_t device_id){
         .auth_mode = PresharedKey128, 
     };
 
-    _handle = longfi_new_handle(&BoardBindings, &this->_radio, lf_config, &auth_cb);
+    _handle = longfi_new_handle(&BoardBindings, &this->_radio, lf_config, auth_cb);
 
     NSS_PIN = this->_nss;
     DIO0_PIN = this->_dio0;
