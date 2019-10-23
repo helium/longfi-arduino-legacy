@@ -59,4 +59,5 @@ void loop() {
   // send blocks until complete
   LongFi.send(data, sizeof(data));
   data[0]++;
+  delay(2000);
 }
