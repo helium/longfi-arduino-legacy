@@ -14,6 +14,7 @@ const uint8_t RADIO_MOSI_PIN  = RADIO_MOSI_PORT;
 const uint8_t RADIO_MISO_PIN  = RADIO_MISO_PORT;
 const uint8_t RADIO_SCLK_PIN  = RADIO_SCLK_PORT;
 const uint8_t RADIO_SS_PIN    = RADIO_NSS_PORT;
+LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
 #endif
 #ifdef _VARIANT_ARDUINO_CATENA_461x_
 // MCCI Catena 4610
@@ -24,18 +25,19 @@ const uint8_t RADIO_MOSI_PIN  = RADIO_MOSI;
 const uint8_t RADIO_MISO_PIN  = RADIO_MISO;
 const uint8_t RADIO_SCLK_PIN  = RADIO_SCK;
 const uint8_t RADIO_SS_PIN    = RADIO_SS;
+LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN, RADIO_TCXO_PIN);
 #endif
 #ifdef _VARIANT_ARDUINO_ZERO_
 // Adafruit Feather M0 Lora
 const uint8_t RADIO_RESET_PIN = 4;
 const uint8_t RADIO_DIO_0_PIN = 3;
 const uint8_t RADIO_SS_PIN    = 8;
-#endif
-
 LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
+#endif
 
 void setup() {
   Serial.begin(9600);
+  Serial.println("Setup Start");
 
   #if defined(_VARIANT_ARDUINO_STM32_) || defined(_VARIANT_ARDUINO_CATENA_461x_) 
   SPI.setMOSI(RADIO_MOSI_PIN);
@@ -46,12 +48,7 @@ void setup() {
   SPI.begin();
 
   LongFi.init(oui, device_id);
-  Serial.println("Setup Start");
-
-  #ifdef _VARIANT_ARDUINO_CATENA_461x_
-  // Enable TCXO On Catena Boards 
-  LongFi.enable_tcxo(RADIO_TCXO_PIN);
-  #endif
+  Serial.println("Setup Complete");
 }
 
 uint8_t data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
@@ -62,4 +59,5 @@ void loop() {
   // send blocks until complete
   LongFi.send(data, sizeof(data));
   data[0]++;
+  delay(2000);
 }

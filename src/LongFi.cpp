@@ -7,56 +7,102 @@
 #include "longfi-device/radio/sx1272/sx1272.h"
 #include "longfi-device/radio/sx126x/sx126x.h"
 
-static int CS_PIN;
+static int NSS_PIN;
 static int DIO0_PIN;
+static int TCXO_PIN;
+static int RESET_PIN;
+
 extern "C" {
-uint16_t ArduinoSpiInOut(LF_Spi_t *s, uint16_t outData){
+
+void BoardReset(bool enable)
+{
+  //Radio Reset
+  digitalWrite(RESET_PIN, LOW);
+
+  delay(1);
+
+  digitalWrite(RESET_PIN, HIGH); 
+
+  delay(6);
+
+  digitalWrite(RESET_PIN, LOW);
+
+  delay(1);
+
+  digitalWrite(RESET_PIN, HIGH);
+}
+
+uint8_t BoardSpiInOut(LF_Spi_t *s, uint8_t outData){
     return SPI.transfer(outData);
 }
 
-void ArduinoDelayMs(uint32_t ms){
+void BoardDelayMs(uint32_t ms){
     delay(ms);
 }
 
-void ArduinoGpioInit(LF_Gpio_t *obj,
-              PinNames pin,
-              PinModes mode,
-              PinConfigs config,
-              PinTypes pin_type,
-              uint32_t val){}
+void BoardSpiNss(bool sel){
+    if (sel) {
+        digitalWrite(NSS_PIN, HIGH);
 
-
-
-void ArduinoGpioWrite(LF_Gpio_t *obj, uint32_t val){
-    if (val == 0) {
-        digitalWrite(CS_PIN, LOW);
     } else {
-        digitalWrite(CS_PIN, HIGH);
+        digitalWrite(NSS_PIN, LOW);
     }
 }
 
-uint32_t ArduinoGpioRead(LF_Gpio_t *obj){
+uint32_t BoardGetRandomBits(uint8_t seed)
+{
+    return 0x1;
+}
+
+bool BoardBusyPinStatus(void)
+{
+    return true;
+}
+
+uint8_t BoardReducePower(uint8_t amount)
+{
     return 0;
 }
 
+uint8_t BoardSetBoardTcxo(bool enable)
+{
+    if(enable)
+    {
+        digitalWrite(TCXO_PIN, HIGH);
+    }
+    else
+    {
+        digitalWrite(TCXO_PIN, LOW);
+    }
+    return 6;
+}
 
-void ArduinoGpioSetInterrupt(LF_Gpio_t *obj, IrqModes irqMode, IrqPriorities irqPriority, GpioIrqHandler *irqHandler){
+void BoardSetAntennaPins(AntPinsMode_t mode, uint8_t power)
+{
 }
 }
 
-static BoardBindings_t ArduinoBindings  = {
-    .spi_in_out = &ArduinoSpiInOut,
-    .gpio_init = &ArduinoGpioInit,
-    .gpio_write = &ArduinoGpioWrite,
-    .gpio_read = &ArduinoGpioRead,
-    .gpio_set_interrupt = &ArduinoGpioSetInterrupt,
-    .delay_ms = &ArduinoDelayMs,
+static BoardBindings_t BoardBindings = {
+    .spi_in_out = BoardSpiInOut,
+    .spi_nss = BoardSpiNss,
+    .reset = BoardReset,
+    .delay_ms = BoardDelayMs,
+    .get_random_bits = BoardGetRandomBits,
+    .busy_pin_status = NULL,
+    .reduce_power = NULL, 
+    .set_board_tcxo = NULL,
+    .set_antenna_pins = NULL,
 };
+
+uint8_t preshared_key[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+uint8_t *GetPresharedKey(){
+  return preshared_key;
+}
 
 static volatile bool DIO0FIRED = false;
 
-LongFi::LongFi(RadioType radio, int reset, int cs, int dio0)
-    : _cs(cs)
+LongFi::LongFi(RadioType radio, int reset, int nss, int dio0)
+    : _nss(nss)
     , _dio0(dio0)
     , _rst(reset)
     {
@@ -72,7 +118,28 @@ LongFi::LongFi(RadioType radio, int reset, int cs, int dio0)
             _radio = SX1272RadioNew();
             break;
         }
+    };
 
+LongFi::LongFi(RadioType radio, int reset, int nss, int dio0, int tcxo)
+    : _nss(nss)
+    , _dio0(dio0)
+    , _rst(reset)
+    , _tcxo(tcxo)
+    {
+        switch (radio)
+        {   
+            case SX126x:
+            _radio = SX126xRadioNew();
+            break;
+            case SX1276:
+            _radio = SX1276RadioNew();
+            break;
+            case SX1272:
+            _radio = SX1272RadioNew();
+            break;
+        }
+        // TCXO Exist
+        BoardBindings.set_board_tcxo = BoardSetBoardTcxo;
     };
 
 void dio0_callback(){
@@ -82,66 +149,40 @@ void dio0_callback(){
 }
 
 void LongFi::init(uint32_t oui, uint16_t device_id){
-    // Reset Radio 
-    digitalWrite(this->_rst, LOW);
-    delay(1000);
-    digitalWrite(this->_rst, HIGH);
-    delay(1000);
 
-    RfConfig_t config = {
+    union LongFiAuthCallbacks auth_cb = {.preshared_key = preshared_key};
+
+    LongFiConfig_t lf_config = {
         .oui = oui,
         .device_id = device_id,
+        .auth_mode = PresharedKey128, 
     };
-    _handle = longfi_new_handle(&ArduinoBindings, &this->_radio, config);
 
-    CS_PIN = this->_cs;
+    _handle = longfi_new_handle(&BoardBindings, &this->_radio, lf_config, auth_cb);
+
+    NSS_PIN = this->_nss;
     DIO0_PIN = this->_dio0;
-    pinMode(this->_cs, OUTPUT);
+    TCXO_PIN = this->_tcxo;
+    RESET_PIN = this->_rst;
+    pinMode(this->_nss, OUTPUT);
     pinMode(this->_dio0, INPUT);
-    attachInterrupt(DIO0_PIN, dio0_callback, RISING);
-    longfi_init(&_handle);
-
-};
-
-void LongFi::enable_tcxo(int tcxo_pin){
-    // Setup Pins for TCXO Enable
-    pinMode(tcxo_pin, OUTPUT);
+    pinMode(this->_tcxo, OUTPUT);
     pinMode(this->_rst, OUTPUT);
+    attachInterrupt(DIO0_PIN, dio0_callback, RISING);
 
-    // Enable TCXO  
-    digitalWrite(tcxo_pin, HIGH);
-    digitalWrite(this->_rst, LOW);
-    delay(1);
-    digitalWrite(this->_rst, HIGH);
-    delay(6);
-    longfi_enable_tcxo(&_handle); 
-    digitalWrite(this->_rst, LOW);
-    delay(1);
-    digitalWrite(this->_rst, HIGH);
-}
+    longfi_init(&_handle);
+};
 
 //blocks until done
 void LongFi::send(const uint8_t * data, size_t len){   
     noInterrupts();
     DIO0FIRED = false;
     interrupts();
-    longfi_send(&this->_handle, LONGFI_QOS_0, data, len);
+    longfi_send(&this->_handle, data, len);
 
-    ClientEvent event = ClientEvent_None;
-    while( event!=ClientEvent_TxDone ){
-        while(!DIO0FIRED){};
-        noInterrupts();
-        DIO0FIRED = false;
-        interrupts();
-        event = longfi_handle_event(&this->_handle, DIO0);
-    }
-
-};
-
-void LongFi::set_buffer(uint8_t * buf, size_t len){
-    longfi_set_buf(&this->_handle, buf, len);
-};
-
-uint32_t LongFi::get_random(){
-    return longfi_get_random(&this->_handle);
+    while(!DIO0FIRED){};
+    noInterrupts();
+    DIO0FIRED = false;
+    interrupts();
+    longfi_handle_event(&this->_handle, DIO0);
 };
