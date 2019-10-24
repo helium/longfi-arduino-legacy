@@ -8,6 +8,9 @@ This arduino library supports radio communication with Semtech compatible radios
 ### B-L072Z-LRWAN1 - ST STM32L0 Discovery kit  
 Install board support package, find instructions [here](https://github.com/stm32duino/Arduino_Core_STM32#getting-started).  
 
+**Important**  
+Next, following [these](B-L072Z-LRWAN1-board-support-fix.md) instructions.
+
 Arduino IDE:  
 1. Select Tools -> Board: -> Discovery 
 2. Select Tools -> Board part number: -> Discovery L072Z-LRWAN1 
@@ -17,6 +20,9 @@ Arduino IDE:
 
 ### Catena 4610 - MCCI  
 Install board support package, find instructions [here](https://github.com/mcci-catena/Arduino_Core_STM32#getting-started). 
+
+**Important**  
+Next, following [these](Catena-4610-board-support-fix.md) instructions.
 
 Arduino IDE:  
 Select Tools -> Board: -> MCCI Catena 4610.  
