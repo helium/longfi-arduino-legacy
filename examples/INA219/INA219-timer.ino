@@ -43,21 +43,21 @@ void setup() {
   Wire.begin();        // join i2c bus (address optional for master)
 
   pinMode(LED_BUILTIN, OUTPUT);
-  
+
   //delay(500);
   //Writing the configuration register
   Wire.beginTransmission(INA219_BASE_ADDR); // transmit to device
   Wire.write(INA219_CONF_REG); //Address of the configuration register
-  Wire.write(0b00011100); //LSB-MSB Reset = 0 ; BRNG = 0 (16 v); pg = 11 (/8) BADC=1001 (9); 
+  Wire.write(0b00011100); //LSB-MSB Reset = 0 ; BRNG = 0 (16 v); pg = 11 (/8) BADC=1001 (9);
   Wire.write(0b11000111); //LSB-MSB SADC = 1010 (2.13 ms conversion time) Mode = 111 (Shunt and bus, continuous)
-  Wire.endTransmission(INA219_BASE_ADDR); // stop transmitting
+  Wire.endTransmission(); // stop transmitting
 
-  
+
   Wire.beginTransmission(INA219_BASE_ADDR); // transmit to device
   Wire.write(INA219_CALIBRATION_REG); //Address of the configuration register
   Wire.write(0b10000); //Configuration byte MSB
   Wire.write(0b01000100);//Configuration byte LSB //01010100
-  Wire.endTransmission(INA219_BASE_ADDR); // stop transmitting
+  Wire.endTransmission(); // stop transmitting
 
   Serial.begin(9600);  // start serial for output
   Serial.println("Setup ready");
@@ -71,7 +71,7 @@ void setup() {
   Serial.println("OLED begun");
 
   display.display();
-  
+
   display.clearDisplay();
   display.display();
   display.setTextColor(WHITE);
@@ -114,39 +114,39 @@ void loop() {
     noInterrupts();
     sample_almost_ready = false;
     interrupts();
-    
+
     counter++;
     digitalWrite(LED_BUILTIN,HIGH);
-    
+
     Wire.beginTransmission(INA219_BASE_ADDR); // transmit to device
     Wire.write(INA219_BUS_VOLT_REG); //Adress of the result register
-    Wire.endTransmission(INA219_BASE_ADDR);  //stop transmiting
+    Wire.endTransmission();  //stop transmiting
     Wire.requestFrom(INA219_BASE_ADDR, 2);
     MSB_V  = Wire.read();
     LSB_V  = Wire.read();
-    
+
     Wire.beginTransmission(INA219_BASE_ADDR); // transmit to device
     Wire.write(INA219_CURRENT_REG); //Adress of the result register
-    Wire.endTransmission(INA219_BASE_ADDR);  //stop transmiting
-         
+    Wire.endTransmission();  //stop transmiting
+
     Wire.requestFrom(INA219_BASE_ADDR, 2);
     MSB_C  = Wire.read();
     LSB_C  = Wire.read();
 
     Wire.beginTransmission(INA219_BASE_ADDR); // transmit to device
     Wire.write(INA219_POWER_REG); //Adress of the result register
-    Wire.endTransmission(INA219_BASE_ADDR);  //stop transmiting
-         
+    Wire.endTransmission();  //stop transmiting
+
     Wire.requestFrom(INA219_BASE_ADDR, 2);
     MSB_P  = Wire.read();
     LSB_P  = Wire.read();
 
 //    float voltage = (float)(((MSB_V << 8 | LSB_V) >> 3) * 16) / 4000.0;
-//    
-//    
+//
+//
 //    int16_t currentRegister = (((MSB_C) << 8) | LSB_C) ;
-//    
-//    
+//
+//
 //    float current =  currentRegister * 97.65;
     int power = ((MSB_P << 8 | LSB_P) )   ; //97.65uA * 20
     //int power = abs(voltage * current/1000);
@@ -156,8 +156,8 @@ void loop() {
     int average = sum >> SAMPLES_DIV;
     minN = -1;
     maxN = 0;
-    
-    for (int i=0;i<NUM_SAMPLES-1;i++){  
+
+    for (int i=0;i<NUM_SAMPLES-1;i++){
       if (values [i] > maxN){
           maxN = values [i];
       }
@@ -165,17 +165,17 @@ void loop() {
           minN = values [i];
       }
     }
-    
+
     if (counter == 10 ){
         counter = 0;
         String minN_String = String(minN * 193);
         String average_String = String(average* 193);
         String maxN_String = String(maxN* 193);
-        
+
         display.clearDisplay();
         printformat();
         display.setTextSize(1);
-        
+
         display.setCursor(30,0);
         int l = minN_String.length();
         if (minN==0){
@@ -192,7 +192,7 @@ void loop() {
         else{
           display.print(average_String.substring(0,l-2)+ "." + average_String.substring(l-2));
         }
-        
+
         display.setCursor(30,20);
         l = maxN_String.length();
         if (maxN==0){
@@ -209,10 +209,10 @@ void loop() {
     else {
         pointer++;
     }
-    
+
   }
   else if(!sample_almost_ready){
      digitalWrite(LED_BUILTIN,LOW);
-      __WFI();  
+      __WFI();
   }
 }
