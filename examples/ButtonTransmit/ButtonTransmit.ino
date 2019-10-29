@@ -15,6 +15,7 @@ const uint8_t RADIO_MISO_PIN  = RADIO_MISO_PORT;
 const uint8_t RADIO_SCLK_PIN  = RADIO_SCLK_PORT;
 const uint8_t RADIO_SS_PIN    = RADIO_NSS_PORT;
 const uint8_t USER_BUTTON     = USER_BTN;
+const uint8_t LED             = LED_BLUE;
 LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
 #endif
 
@@ -23,6 +24,7 @@ static boolean volatile button_pushed = false;
 void setup() {
   Serial.begin(9600);
   Serial.println("Setup Start");
+  pinMode(LED, OUTPUT);
 
   SPI.setMOSI(RADIO_MOSI_PIN);
   SPI.setMISO(RADIO_MISO_PIN);
@@ -50,7 +52,12 @@ void loop() {
       uint8_t msg_len = sizeof(full_msg) - 1;
       full_msg.getBytes(buf, msg_len);
       Serial.println("Button press #: "+String(counter));
+      // Turn LED ON to indicate beginning of TX
+      digitalWrite(LED, HIGH);
+      // send blocks until complete
       LongFi.send(buf, msg_len);
+      // Turn LED OFF to indicate completion of TX
+      digitalWrite(LED, LOW);
       noInterrupts();
       button_pushed = false;
       interrupts();
