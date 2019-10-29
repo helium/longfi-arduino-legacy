@@ -180,9 +180,12 @@ void LongFi::send(const uint8_t * data, size_t len){
     interrupts();
     longfi_send(&this->_handle, data, len);
 
-    while(!DIO0FIRED){};
-    noInterrupts();
-    DIO0FIRED = false;
-    interrupts();
-    longfi_handle_event(&this->_handle, DIO0);
+    ClientEvent_t event = ClientEvent_None;
+    while( event!=ClientEvent_TxDone ){
+        while(!DIO0FIRED){};
+        noInterrupts();
+        DIO0FIRED = false;
+        interrupts();
+        event = longfi_handle_event(&this->_handle, DIO0);
+    }
 };
