@@ -14,6 +14,7 @@ const uint8_t RADIO_MOSI_PIN  = RADIO_MOSI_PORT;
 const uint8_t RADIO_MISO_PIN  = RADIO_MISO_PORT;
 const uint8_t RADIO_SCLK_PIN  = RADIO_SCLK_PORT;
 const uint8_t RADIO_SS_PIN    = RADIO_NSS_PORT;
+const uint8_t LED             = LED_BLUE; 
 LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
 #endif
 #ifdef _VARIANT_ARDUINO_CATENA_461x_
@@ -25,6 +26,7 @@ const uint8_t RADIO_MOSI_PIN  = RADIO_MOSI;
 const uint8_t RADIO_MISO_PIN  = RADIO_MISO;
 const uint8_t RADIO_SCLK_PIN  = RADIO_SCK;
 const uint8_t RADIO_SS_PIN    = RADIO_SS;
+const uint8_t LED             = LED_RED;
 LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN, RADIO_TCXO_PIN);
 #endif
 #ifdef _VARIANT_ARDUINO_ZERO_
@@ -32,12 +34,14 @@ LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DI
 const uint8_t RADIO_RESET_PIN = 4;
 const uint8_t RADIO_DIO_0_PIN = 3;
 const uint8_t RADIO_SS_PIN    = 8;
+const uint8_t LED             = LED_BUILTIN;
 LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
 #endif
 
 void setup() {
   Serial.begin(9600);
   Serial.println("Setup Start");
+  pinMode(LED, OUTPUT);
 
   #if defined(_VARIANT_ARDUINO_STM32_) || defined(_VARIANT_ARDUINO_CATENA_461x_) 
   SPI.setMOSI(RADIO_MOSI_PIN);
@@ -56,8 +60,13 @@ uint8_t data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
 void loop() {
   Serial.print("sending: ");
   Serial.println(data[0]);
+  // Turn LED ON to indicate beginning of TX
+  digitalWrite(LED, HIGH);
   // send blocks until complete
   LongFi.send(data, sizeof(data));
+  // Turn LED OFF to indicate completion of TX
+  digitalWrite(LED, LOW);
+  // Increment first byte to differentiate packets
   data[0]++;
   delay(2000);
 }
