@@ -7,6 +7,9 @@
 #include "longfi-device/radio/sx1272/sx1272.h"
 #include "longfi-device/radio/sx126x/sx126x.h"
 
+#define RAND_MIN 0
+#define RAND_MAX 2147483647 
+
 static int NSS_PIN;
 static int DIO0_PIN;
 static int TCXO_PIN;
@@ -49,9 +52,9 @@ void BoardSpiNss(bool sel){
     }
 }
 
-uint32_t BoardGetRandomBits(uint8_t seed)
+uint32_t BoardGetRandomBits(uint8_t r_param)
 {
-    return 0x1;
+   return random(RAND_MIN, RAND_MAX); 
 }
 
 bool BoardBusyPinStatus(void)
@@ -169,6 +172,9 @@ void LongFi::init(uint32_t oui, uint16_t device_id){
     pinMode(this->_tcxo, OUTPUT);
     pinMode(this->_rst, OUTPUT);
     attachInterrupt(DIO0_PIN, dio0_callback, RISING);
+
+    // Seed RNG with A0 analog read value
+    randomSeed(analogRead(A0));
 
     longfi_init(&_handle);
 };
