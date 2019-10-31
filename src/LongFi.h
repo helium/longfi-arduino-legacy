@@ -17,7 +17,7 @@ class LongFi
     };
     LongFi(RadioType radio, int reset, int nss, int dio0);
     LongFi(RadioType radio, int reset, int nss, int dio0, int tcxo);
-    void init(uint32_t oui, uint16_t device_id);
+    void init(uint32_t oui, uint16_t device_id, const uint8_t* preshared_key);
     void send(const uint8_t * data, size_t len);
   private:
     int _nss;

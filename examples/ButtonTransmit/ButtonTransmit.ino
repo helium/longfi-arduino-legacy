@@ -5,6 +5,7 @@
 // set OUI and device_id to work with LongFi routing
 const uint32_t oui = 1;
 const uint16_t device_id = 11;
+const uint8_t preshared_key[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
 
 #ifdef _VARIANT_ARDUINO_STM32_
 // Discovery L072CZ-LRWAN1
@@ -32,7 +33,7 @@ void setup() {
   SPI.setSSEL(RADIO_SS_PIN);
   SPI.begin();
 
-  LongFi.init(oui, device_id);
+  LongFi.init(oui, device_id, preshared_key);
   Serial.println("Setup Complete");
 
   pinMode(USER_BUTTON, INPUT_PULLUP);
