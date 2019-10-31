@@ -97,11 +97,6 @@ static BoardBindings_t BoardBindings = {
     .set_antenna_pins = NULL,
 };
 
-uint8_t preshared_key[16] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
-uint8_t *GetPresharedKey(){
-  return preshared_key;
-}
-
 static volatile bool DIO0FIRED = false;
 
 LongFi::LongFi(RadioType radio, int reset, int nss, int dio0)
@@ -151,7 +146,7 @@ void dio0_callback(){
     interrupts();
 }
 
-void LongFi::init(uint32_t oui, uint16_t device_id){
+void LongFi::init(uint32_t oui, uint16_t device_id, const uint8_t* preshared_key){
 
     union LongFiAuthCallbacks auth_cb = {.preshared_key = preshared_key};
 
