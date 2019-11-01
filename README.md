@@ -21,9 +21,6 @@ Arduino IDE:
 ### Catena 4610 - MCCI  
 Install board support package, find instructions [here](https://github.com/mcci-catena/Arduino_Core_STM32#getting-started). 
 
-**Important**  
-Next, following [these](Catena-4610-board-support-fix.md) instructions.
-
 Arduino IDE:  
 Select Tools -> Board: -> MCCI Catena 4610.  
 
