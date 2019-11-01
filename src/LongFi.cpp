@@ -35,7 +35,7 @@ void BoardReset(bool enable)
   digitalWrite(RESET_PIN, HIGH);
 }
 
-uint8_t BoardSpiInOut(LF_Spi_t *s, uint8_t outData){
+uint8_t BoardSpiInOut(uint8_t outData){
     return SPI.transfer(outData);
 }
 
