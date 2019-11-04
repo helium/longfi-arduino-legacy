@@ -3,6 +3,22 @@
 
 This arduino library supports radio communication with Semtech compatible radios using the Helium LongFi Protocol.
 
+## Install Library
+This arduino library needs to be installed manullay as it has not been added to the Arduino Library registry yet.
+
+1. Clone this repo in the following directory:  
+linux: /home/{user}/Arduino/libraries  
+windows: Documents/Arduino/libraries  
+mac os: Documents/Arduino/libraries  
+
+2. Restart Arduino IDE
+
+## Example Sketches
+
+Arduino IDE:  
+File -> Examples -> LongFi -> TransmitPacket  
+File -> Examples -> LongFi -> ButtonTransmit (Only supported on B-L072Z-LRWAN1) 
+
 ## Board Support
 
 ### B-L072Z-LRWAN1 - ST STM32L0 Discovery kit  
@@ -36,22 +52,6 @@ Select Tools -> Board: -> MCCI Catena 4610.
 [Adafruit Feather M0 with RFM95 Product Page](https://www.adafruit.com/product/3178)  
 [Adafruit Feather M0 with RFM95 Datasheets & Files](https://learn.adafruit.com/adafruit-feather-m0-radio-with-lora-radio-module/downloads)  
 
-## Install Library
-This arduino library needs to be installed manullay as it has not been added to the Arduino Library registry yet.
-
-1. Clone this repo in the following directory:  
-linux: /home/{user}/Arduino/libraries  
-windows: Documents/Arduino/libraries  
-mac os: Documents/Arduino/libraries  
-
-2. Restart Arduino IDE
-
-## Example Sketches
-
-Arduino IDE:  
-File -> Examples -> LongFi -> TransmitPacket  
-File -> Examples -> LongFi -> ButtonTransmit (Only supported on B-L072Z-LRWAN1) 
-
 ## Programming(Upload Method):
 
 ### B-L072Z-LRWAN1 - ST STM32L0 Discovery kit 
@@ -77,4 +77,3 @@ Arduino IDE:
 Select Tools -> Upload Method -> STLink
 
 Requires an ST-Link debugger connected to SWCLK, SWDIO, Vref, and GND, refer to pin mapping diagram. 
-
