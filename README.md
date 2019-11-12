@@ -3,9 +3,13 @@
 
 This arduino library supports radio communication with Semtech compatible radios using the Helium LongFi Protocol.
 
-## Install Library
-This arduino library needs to be installed manullay as it has not been added to the Arduino Library registry yet.
+## Install Library with Arduino IDE
+Arduino IDE:  
+1. Sketch -> Include Libraries -> Manage Libraries
+2. Search for `LongFi`
+3. Install Latest version
 
+## Install Library with Git
 1. Clone this repo in the following directory:  
 linux: /home/{user}/Arduino/libraries  
 windows: Documents/Arduino/libraries  
