@@ -52,6 +52,10 @@ String message2 = "World!";
 
 void loop() {
   while(button_pushed) {
+      // Important! It is recommended to use a more efficient
+      // data representation and/or serialization technique when 
+      // transmitting data in a production setting.
+
       // Prepare Payload Buffer
       String full_msg = "{\"value1\":" + String(counter) + ",\"value2\":\"" + message1 + "\",\"value3\":\"" + message2 + "\"}";
       uint8_t msg_len = full_msg.length();
