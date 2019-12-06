@@ -39,6 +39,20 @@ const uint8_t LED             = LED_BUILTIN;
 LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
 #endif
 
+// !! Important !!
+// Be aware that endianness will
+// depend on your target device and the 
+// receiving device of this packet payload.
+struct LongFiPayload_t{
+  uint32_t value1;
+  int16_t value2;
+  float value3;
+};
+
+struct LongFiPayload_t lf_payload;
+uint8_t lf_buf[sizeof(lf_payload)];
+uint8_t counter = 1;
+
 void setup() {
   Serial.begin(9600);
   Serial.println("Setup Start");
@@ -52,22 +66,36 @@ void setup() {
   #endif
   SPI.begin();
 
+  // Init LongFi
   LongFi.init(oui, device_id, preshared_key);
   Serial.println("Setup Complete");
 }
 
-uint8_t data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
-
 void loop() {
-  Serial.print("sending: ");
-  Serial.println(data[0]);
+  // Load new payload values
+  lf_payload.value1 = counter;
+  lf_payload.value2 = random(-15000, 15000);
+  lf_payload.value3 = random(0, 99)/100.0;
+
+  // Copy payload struct to buf
+  memcpy(lf_buf, &lf_payload, sizeof(lf_payload));
+
+  // Debug print
+  Serial.println("Button press #: "+String(counter));
+  Serial.println("value1: " + String(lf_payload.value1) + " value2: " + String(lf_payload.value2) + " value3: " + String(lf_payload.value3));
+  Serial.println("Buffer Size: " + String(sizeof(lf_buf)));
+  for(int i = 0; i < sizeof(lf_buf); i++)
+  {
+    Serial.println("Byte [" + String(i) + "]: " + String(lf_buf[i]));
+  }
+
   // Turn LED ON to indicate beginning of TX
   digitalWrite(LED, HIGH);
   // send blocks until complete
-  LongFi.send(data, sizeof(data));
+  LongFi.send(lf_buf, sizeof(lf_buf)); 
   // Turn LED OFF to indicate completion of TX
   digitalWrite(LED, LOW);
-  // Increment first byte to differentiate packets
-  data[0]++;
-  delay(2000);
+  counter++;
+  // Wait 5 seconds before transmitting again
+  delay(5000);
 }
