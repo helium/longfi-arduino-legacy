@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "LongFi.h"
-
 // set OUI and device_id to work with LongFi routing
 const uint32_t oui = 1234;
 const uint16_t device_id = 99;
@@ -19,15 +18,22 @@ const uint8_t USER_BUTTON     = USER_BTN;
 const uint8_t LED             = LED_BLUE;
 LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DIO_0_PIN);
 #endif
-
 static boolean volatile button_pushed = false;
 
+struct LongFiPayload_t{
+  uint32_t value1;
+  int16_t value2;
+  float value3;
+};
+
+struct LongFiPayload_t lf_payload;
+uint8_t lf_buf[sizeof(lf_payload)];
+uint8_t counter = 1;
+
 void setup() {
-  // Configure Debug Print and LED
   Serial.begin(9600);
   Serial.println("Setup Start");
   pinMode(LED, OUTPUT);
-  // Assign Radio SPI Pins
   SPI.setMOSI(RADIO_MOSI_PIN);
   SPI.setMISO(RADIO_MISO_PIN);
   SPI.setSCLK(RADIO_SCLK_PIN);
@@ -35,46 +41,43 @@ void setup() {
   SPI.begin();
   // Init LongFi
   LongFi.init(oui, device_id, preshared_key);
-  // Configure User Button 
+  // Configure User Button
   pinMode(USER_BUTTON, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(USER_BUTTON), push_button_ISR, HIGH);
   Serial.println("Setup Complete");
 }
-
 void push_button_ISR(){
   button_pushed = true;
 }
 
-uint8_t buf[128];
-uint8_t counter = 1;
-String message1 = "Hello";
-String message2 = "World!";
-
 void loop() {
   while(button_pushed) {
-      // Important! It is recommended to use a more efficient
-      // data representation and/or serialization technique when 
-      // transmitting data in a production setting.
+      // Load new payload values
+      lf_payload.value1 = counter;
+      lf_payload.value2 = random(-15000, 15000);
+      lf_payload.value3 = random(0, 99)/100.0;
 
-      // Prepare Payload Buffer
-      String full_msg = "{\"value1\":" + String(counter) + ",\"value2\":\"" + message1 + "\",\"value3\":\"" + message2 + "\"}";
-      uint8_t msg_len = full_msg.length();
-      memcpy(buf, full_msg.c_str(), msg_len);
-      // Debug Prints
-      Serial.println("Payload: " + full_msg);
-      Serial.println("Length: " + String(msg_len));
-      Serial.println("Button press #: " + String(counter));
+      // Copy payload struct to buf
+      memcpy(lf_buf, &lf_payload, sizeof(lf_payload));
+
+      // Debug print
+      Serial.println("Button press #: "+String(counter));
+      Serial.println("value1: " + String(lf_payload.value1) + " value2: " + String(lf_payload.value2) + " value3: " + String(lf_payload.value3));
+      Serial.println("Buffer Size: " + String(sizeof(lf_buf)));
+      for(int i = 0; i < sizeof(lf_buf); i++)
+      {
+        Serial.println("Byte [" + String(i) + "]: " + String(lf_buf[i]));
+      }
+
       // Turn LED ON to indicate beginning of TX
       digitalWrite(LED, HIGH);
-      // Send Payload Buffer 
-      LongFi.send(buf, msg_len);
+      // Send blocks until complete
+      LongFi.send(lf_buf, sizeof(lf_buf));
       // Turn LED OFF to indicate completion of TX
       digitalWrite(LED, LOW);
-      // Reset Button Flag
       noInterrupts();
       button_pushed = false;
       interrupts();
-      // Increment Counter
       counter++;
   }
 }
