@@ -20,6 +20,10 @@ LongFi LongFi(LongFi::RadioType::SX1276, RADIO_RESET_PIN, RADIO_SS_PIN, RADIO_DI
 #endif
 static boolean volatile button_pushed = false;
 
+// !! Important !!
+// Be aware that endianness will
+// depend on your target device and the 
+// receiving device of this packet payload.
 struct LongFiPayload_t{
   uint32_t value1;
   int16_t value2;
