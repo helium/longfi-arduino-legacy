@@ -53,6 +53,21 @@ Select Tools -> Board: -> MCCI Catena 4610.
 [Adafruit Feather M0 with RFM95 Product Page](https://www.adafruit.com/product/3178)  
 [Adafruit Feather M0 with RFM95 Datasheets & Files](https://learn.adafruit.com/adafruit-feather-m0-radio-with-lora-radio-module/downloads)  
 
+### Heltec ESP32 based LoRa boards
+Install Heltec ESP32 board support package, instructions here [here](https://docs.heltec.cn/#/en/user_manual/how_to_install_esp32_Arduino?id=step1-download-arduino-esp32-support)
+
+**Important**  
+Next, until [this](https://github.com/Heltec-Aaron-Lee/WiFi_Kit_series/issues/117) issue is resolved, follow [these](Heltec-ESP32-board-support-fix.md) instructions to enable support for ldflags.
+
+Arduino IDE:
+Select Tools -> Board: -> `ESP32 Arduino`
+
+_`ESP32 Arduino` is currently one of_
+- `Wireless_Stick`
+- `Wireless_Stick_Lite`
+- `WIFI_Lora_32`
+- `WIFI_LoRa_32_V2`
+
 ## Programming(Upload Method):
 
 ### B-L072Z-LRWAN1 - ST STM32L0 Discovery kit 
@@ -78,3 +93,7 @@ Arduino IDE:
 Select Tools -> Upload Method -> STLink
 
 Requires an ST-Link debugger connected to SWCLK, SWDIO, Vref, and GND, refer to pin mapping diagram. 
+
+### Heltec ESP32 based LoRa boards
+No special instructions are needed, the defaults are fine.
+
