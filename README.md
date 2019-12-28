@@ -21,7 +21,7 @@ mac os: Documents/Arduino/libraries
 
 Arduino IDE:  
 File -> Examples -> LongFi -> TransmitPacket  
-File -> Examples -> LongFi -> ButtonTransmit (Only supported on B-L072Z-LRWAN1) 
+File -> Examples -> LongFi -> ButtonTransmit (Only supported on B-L072Z-LRWAN1 and Heltec ESP32 boards) 
 
 ## Board Support
 
@@ -67,6 +67,10 @@ _`ESP32 Arduino` is currently one of_
 - `Wireless_Stick_Lite`
 - `WIFI_Lora_32`
 - `WIFI_LoRa_32_V2`
+
+[Heltec Wireless Stick Lite Product Page](https://heltec.org/project/wireless-stick-lite/)
+[Heltec Wireless Stick Product Page](https://heltec.org/project/wireless-stick/)
+[Heltec WiFi LoRa 32 (V2) Product Page](https://heltec.org/project/wifi-lora-32/)
 
 ## Programming(Upload Method):
 
