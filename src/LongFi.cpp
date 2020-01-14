@@ -187,6 +187,6 @@ void LongFi::send(const uint8_t * data, size_t len){
         noInterrupts();
         DIO0FIRED = false;
         interrupts();
-        event = longfi_handle_event(&this->_handle, DIO0);
+        event = longfi_handle_event(&this->_handle, RFE_DIO0);
     }
 };
