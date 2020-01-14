@@ -68,9 +68,9 @@ _`ESP32 Arduino` is currently one of_
 - `WIFI_Lora_32`
 - `WIFI_LoRa_32_V2`
 
-[Heltec Wireless Stick Lite Product Page](https://heltec.org/project/wireless-stick-lite/)
-[Heltec Wireless Stick Product Page](https://heltec.org/project/wireless-stick/)
-[Heltec WiFi LoRa 32 (V2) Product Page](https://heltec.org/project/wifi-lora-32/)
+[Heltec Wireless Stick Lite Product Page](https://heltec.org/project/wireless-stick-lite/)  
+[Heltec Wireless Stick Product Page](https://heltec.org/project/wireless-stick/)  
+[Heltec WiFi LoRa 32 (V2) Product Page](https://heltec.org/project/wifi-lora-32/)  
 
 ## Programming(Upload Method):
 
