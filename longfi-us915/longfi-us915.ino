@@ -31,6 +31,7 @@
  * arduino-lmic/project_config/lmic_project_config.h or from your BOARDS.txt.
  *
  *******************************************************************************/
+#define CFG_sx1276_radio
 
 #include <lmic.h>
 #include <hal/hal.h>
@@ -54,17 +55,19 @@
 // first. When copying an EUI from ttnctl output, this means to reverse
 // the bytes. For TTN issued EUIs the last bytes should be 0xD5, 0xB3,
 // 0x70.
-static const u1_t PROGMEM APPEUI[8]= { FILLMEIN };
+
+static const u1_t PROGMEM APPEUI[8]= {0x28, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00 };
 void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
 
 // This should also be in little endian format, see above.
-static const u1_t PROGMEM DEVEUI[8]= { FILLMEIN };
+//static const u1_t PROGMEM DEVEUI[8]= { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x46, 0x10 };
+static const u1_t PROGMEM DEVEUI[8]= { 0x10, 0x46, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
 
 // This key should be in big endian format (or, since it is not really a
 // number but a block of memory, endianness does not really apply). In
 // practice, a key taken from the TTN console can be copied as-is.
-static const u1_t PROGMEM APPKEY[16] = { FILLMEIN };
+static const u1_t PROGMEM APPKEY[16] = { 0xCC, 0x7C, 0xD6, 0x15, 0xA3, 0xCB, 0x9B, 0x5A, 0x3B, 0x55, 0x9B, 0x49, 0x3F, 0x92, 0x43, 0x79};
 void os_getDevKey (u1_t* buf) {  memcpy_P(buf, APPKEY, 16);}
 
 static uint8_t mydata[] = "Hello, world!";
@@ -72,7 +75,7 @@ static osjob_t sendjob;
 
 // Schedule TX every this many seconds (might become longer due to duty
 // cycle limitations).
-const unsigned TX_INTERVAL = 60;
+const unsigned TX_INTERVAL = 5;
 
 // Pin mapping
 //
@@ -116,9 +119,23 @@ const lmic_pinmap lmic_pins = {
                },
         .rxtx_rx_active = 1,
         .rssi_cal = 10,
-        .spi_freq = 8000000     // 8MHz
+        .spi_freq = 8000000,     // 8MHz
 };
-#else
+#elif defined(ARDUINO_DISCO_L072CZ_LRWAN1)
+
+const lmic_pinmap lmic_pins = {
+        .nss = 37,
+        .rxtx = 21,
+        .rst = 33,
+        .dio = { 38,    // DIO0 (IRQ) is D25
+                 39,    // DIO1 is D26
+                 40,    // DIO2 is D27
+               },
+        .rxtx_rx_active = 1,
+        .rssi_cal = 10,
+        .spi_freq = 8000000,     // 8MHz
+};
+#elif
 # error "Unknown target"
 #endif
 
@@ -141,6 +158,10 @@ void onEvent (ev_t ev) {
         case EV_JOINING:
             Serial.println(F("EV_JOINING"));
             break;
+        case EV_JOIN_TXCOMPLETE:
+            Serial.println(F("EV_JOIN_TXCOMPLETE"));
+            break;
+            
         case EV_JOINED:
             Serial.println(F("EV_JOINED"));
             {
@@ -246,13 +267,21 @@ void do_send(osjob_t* j){
     // Next TX is scheduled after TX_COMPLETE event.
 }
 
+const uint8_t RADIO_MOSI_PIN  = RADIO_MOSI_PORT;
+const uint8_t RADIO_MISO_PIN  = RADIO_MISO_PORT;
+const uint8_t RADIO_SCLK_PIN  = RADIO_SCLK_PORT;
+const uint8_t RADIO_SS_PIN    = RADIO_NSS_PORT;
+
 void setup() {
-    delay(5000);
-    while (! Serial)
-        ;
     Serial.begin(9600);
     Serial.println(F("Starting"));
-
+    delay(1000);
+    
+    SPI.setMOSI(RADIO_MOSI_PIN);
+    SPI.setMISO(RADIO_MISO_PIN);
+    SPI.setSCLK(RADIO_SCLK_PIN);
+    SPI.setSSEL(RADIO_SS_PIN);
+    
     #ifdef VCC_ENABLE
     // For Pinoccio Scout boards
     pinMode(VCC_ENABLE, OUTPUT);
@@ -261,13 +290,13 @@ void setup() {
     #endif
 
     // LMIC init
-    os_init();
+    os_init();//_ex(&lmic_pins);
     // Reset the MAC state. Session and pending data transfers will be discarded.
     LMIC_reset();
 
     LMIC_setLinkCheckMode(0);
-    LMIC_setDrTxpow(DR_SF7,14);
-    LMIC_selectSubBand(1);
+    LMIC_setDrTxpow(DR_SF8, 20);
+    LMIC_selectSubBand(6);
 
     // Start job (sending automatically starts OTAA too)
     do_send(&sendjob);

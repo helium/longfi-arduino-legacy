@@ -1012,6 +1012,7 @@ static void startrx (u1_t rxmode) {
 
 // get random seed from wideband noise rssi
 int radio_init () {
+
     hal_disableIRQs();
 
     requestModuleActive(1);
@@ -1040,8 +1041,8 @@ int radio_init () {
 #error Missing CFG_sx1272_radio/CFG_sx1276_radio
 #endif
     // set the tcxo input, if needed
-    if (hal_queryUsingTcxo())
-        writeReg(RegTcxo, readReg(RegTcxo) | RegTcxo_TcxoInputOn);
+    //if (hal_queryUsingTcxo())
+        //writeReg(RegTcxo, readReg(RegTcxo) | RegTcxo_TcxoInputOn);
 
     // seed 15-byte randomness via noise rssi
     rxlora(RXMODE_RSSI);
