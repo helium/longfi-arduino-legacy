@@ -50,20 +50,20 @@
 #endif
 
 // This EUI must be in little-endian format, so least-significant-byte
-// first. When copying an EUI from ttnctl output, this means to reverse
-// the bytes. For TTN issued EUIs the last bytes should be 0xD5, 0xB3,
-// 0x70.
-static const u1_t PROGMEM APPEUI[8]= { FILLMEIN };
+// first. When copying an EUI from Helium console output, this means
+// you want to display the AppEUI bytewise in "lsb" mode
+static const u1_t PROGMEM APPEUI[8]= { FILL_ME_IN };
 void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
 
-// This should also be in little endian format, see above.
-static const u1_t PROGMEM DEVEUI[8]= { FILLMEIN };
+// This should also be in little endian format
+// These are user configurable values and Helium console permits anything
+static const u1_t PROGMEM DEVEUI[8]= { FILL_ME_IN };
 void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
 
 // This key should be in big endian format (or, since it is not really a
 // number but a block of memory, endianness does not really apply). In
-// practice, a key taken from the TTN console can be copied as-is.
-static const u1_t PROGMEM APPKEY[16] = { FILLMEIN };
+// practice, a key taken from the Helium console can be copied as-is.
+static const u1_t PROGMEM APPKEY[16] = { FILL_ME_IN };
 void os_getDevKey (u1_t* buf) {  memcpy_P(buf, APPKEY, 16);}
 
 static uint8_t mydata[] = "Hello, world!";
