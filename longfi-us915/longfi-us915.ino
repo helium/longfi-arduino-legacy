@@ -46,8 +46,7 @@
 #ifdef COMPILE_REGRESSION_TEST
 # define FILLMEIN 0
 #else
-# warning "You must replace the values marked FILLMEIN with real values from the TTN control panel!"
-# define FILLMEIN (#dont edit this, edit the lines that use FILLMEIN)
+# warning "You must replace the values marked FILLMEIN with real values from the TTN control panel!"# define FILLMEIN (#dont edit this, edit the lines that use FILLMEIN)
 #endif
 
 // This EUI must be in little-endian format, so least-significant-byte
@@ -143,6 +142,9 @@ void onEvent (ev_t ev) {
             break;
         case EV_JOINING:
             Serial.println(F("EV_JOINING"));
+            break;
+        case EV_JOIN_TXCOMPLETE:
+            Serial.println(F("EV_JOIN_TXCOMPLETE"));
             break;
         case EV_JOINED:
             Serial.println(F("EV_JOINED"));
