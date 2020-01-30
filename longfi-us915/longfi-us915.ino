@@ -46,25 +46,24 @@
 #ifdef COMPILE_REGRESSION_TEST
 # define FILLMEIN 0
 #else
-# warning "You must replace the values marked FILLMEIN with real values from the TTN control panel!"
-# define FILLMEIN (#dont edit this, edit the lines that use FILLMEIN)
+# warning "You must replace the values marked FILLMEIN with real values from the TTN control panel!"# define FILLMEIN (#dont edit this, edit the lines that use FILLMEIN)
 #endif
 
 // This EUI must be in little-endian format, so least-significant-byte
-// first. When copying an EUI from ttnctl output, this means to reverse
-// the bytes. For TTN issued EUIs the last bytes should be 0xD5, 0xB3,
-// 0x70.
-static const u1_t PROGMEM APPEUI[8]= { FILLMEIN };
+// first. When copying an EUI from Helium console output, this means
+// you want to display the AppEUI bytewise in "lsb" mode
+static const u1_t PROGMEM APPEUI[8]= { FILL_ME_IN };
 void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
 
-// This should also be in little endian format, see above.
-static const u1_t PROGMEM DEVEUI[8]= { FILLMEIN };
+// This should also be in little endian format
+// These are user configurable values and Helium console permits anything
+static const u1_t PROGMEM DEVEUI[8]= { FILL_ME_IN };
 void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
 
 // This key should be in big endian format (or, since it is not really a
 // number but a block of memory, endianness does not really apply). In
-// practice, a key taken from the TTN console can be copied as-is.
-static const u1_t PROGMEM APPKEY[16] = { FILLMEIN };
+// practice, a key taken from the Helium console can be copied as-is.
+static const u1_t PROGMEM APPKEY[16] = { FILL_ME_IN };
 void os_getDevKey (u1_t* buf) {  memcpy_P(buf, APPKEY, 16);}
 
 static uint8_t mydata[] = "Hello, world!";
@@ -118,6 +117,9 @@ const lmic_pinmap lmic_pins = {
         .rssi_cal = 10,
         .spi_freq = 8000000     // 8MHz
 };
+#elif defined(MCCI_CATENA_4610) 
+#include "arduino_lmic_hal_boards.h"
+const lmic_pinmap lmic_pins = *Arduino_LMIC::GetPinmap_Catena4610();
 #else
 # error "Unknown target"
 #endif
@@ -140,6 +142,9 @@ void onEvent (ev_t ev) {
             break;
         case EV_JOINING:
             Serial.println(F("EV_JOINING"));
+            break;
+        case EV_JOIN_TXCOMPLETE:
+            Serial.println(F("EV_JOIN_TXCOMPLETE"));
             break;
         case EV_JOINED:
             Serial.println(F("EV_JOINED"));
