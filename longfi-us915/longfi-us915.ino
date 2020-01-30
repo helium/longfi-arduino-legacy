@@ -118,6 +118,20 @@ const lmic_pinmap lmic_pins = {
         .rssi_cal = 10,
         .spi_freq = 8000000     // 8MHz
 };
+#elif defined(ARDUINO_DISCO_L072CZ_LRWAN1)
+// Pin mapping Discovery 
+const lmic_pinmap lmic_pins = {
+        .nss =  RADIO_NSS_PORT,
+        .rxtx = 21,
+        .rst = RADIO_RESET_PORT,
+        .dio = { RADIO_DIO_0_PORT,    // DIO0 (IRQ) is D25
+                 RADIO_DIO_1_PORT,    // DIO1 is D26
+                 RADIO_DIO_2_PORT,    // DIO2 is D27
+               },
+        .rxtx_rx_active = 1,
+        .rssi_cal = 10,
+        .spi_freq = 8000000     // 8MHz
+};
 #else
 # error "Unknown target"
 #endif
@@ -252,6 +266,14 @@ void setup() {
         ;
     Serial.begin(9600);
     Serial.println(F("Starting"));
+
+    #ifdef defined(ARDUINO_DISCO_L072CZ_LRWAN1)
+    SPI.setMOSI(RADIO_MOSI_PORT);
+    SPI.setMISO(RADIO_MISO_PORT);
+    SPI.setSCLK(RADIO_SCLK_PORT);
+    SPI.setSSEL(RADIO_NSS_PORT);
+    SPI.begin();
+    #endif
 
     #ifdef VCC_ENABLE
     // For Pinoccio Scout boards
