@@ -118,6 +118,9 @@ const lmic_pinmap lmic_pins = {
         .rssi_cal = 10,
         .spi_freq = 8000000     // 8MHz
 };
+#elif defined(MCCI_CATENA_4610) 
+#include "arduino_lmic_hal_boards.h"
+const lmic_pinmap lmic_pins = *Arduino_LMIC::GetPinmap_Catena4610();
 #else
 # error "Unknown target"
 #endif
