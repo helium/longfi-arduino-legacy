@@ -272,12 +272,12 @@ void setup() {
     Serial.begin(9600);
     Serial.println(F("Starting"));
 
-    #ifdef defined(ARDUINO_DISCO_L072CZ_LRWAN1)
+    #if defined(ARDUINO_DISCO_L072CZ_LRWAN1)
     SPI.setMOSI(RADIO_MOSI_PORT);
     SPI.setMISO(RADIO_MISO_PORT);
     SPI.setSCLK(RADIO_SCLK_PORT);
     SPI.setSSEL(RADIO_NSS_PORT);
-    SPI.begin();
+    // SPI.begin();
     #endif
 
     #ifdef VCC_ENABLE
@@ -293,7 +293,11 @@ void setup() {
     LMIC_reset();
 
     LMIC_setLinkCheckMode(0);
+<<<<<<< HEAD
     LMIC_setDrTxpow(DR_SF7,14);
+=======
+    LMIC_setDrTxpow(DR_SF8, 20); 
+>>>>>>> 413cd0b... successful join
     LMIC_selectSubBand(6);
 
     // Start job (sending automatically starts OTAA too)
