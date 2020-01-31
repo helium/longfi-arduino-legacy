@@ -44,7 +44,7 @@
 // working but innocuous value.
 //
 #ifdef COMPILE_REGRESSION_TEST
-# define FILLMEIN 0
+# define FILL_ME_IN 0
 #else
 # warning "You must replace the values marked FILLMEIN with real values from the TTN control panel!"# define FILLMEIN (#dont edit this, edit the lines that use FILLMEIN)
 #endif
@@ -120,6 +120,10 @@ const lmic_pinmap lmic_pins = {
 #elif defined(MCCI_CATENA_4610) 
 #include "arduino_lmic_hal_boards.h"
 const lmic_pinmap lmic_pins = *Arduino_LMIC::GetPinmap_Catena4610();
+#elif defined(ARDUINO_DISCO_L072CZ_LRWAN1)
+#include "getpinmap_disco_l072cz_lrwan1.h"
+// Pin mapping Discovery 
+const lmic_pinmap lmic_pins = Arduino_LMIC::GetPinmap_Disco_L072cz_Lrwan1();
 #else
 # error "Unknown target"
 #endif
@@ -258,6 +262,14 @@ void setup() {
     Serial.begin(9600);
     Serial.println(F("Starting"));
 
+    #if defined(ARDUINO_DISCO_L072CZ_LRWAN1)
+    SPI.setMOSI(RADIO_MOSI_PORT);
+    SPI.setMISO(RADIO_MISO_PORT);
+    SPI.setSCLK(RADIO_SCLK_PORT);
+    SPI.setSSEL(RADIO_NSS_PORT);
+    // SPI.begin();
+    #endif
+
     #ifdef VCC_ENABLE
     // For Pinoccio Scout boards
     pinMode(VCC_ENABLE, OUTPUT);
@@ -271,7 +283,7 @@ void setup() {
     LMIC_reset();
 
     LMIC_setLinkCheckMode(0);
-    LMIC_setDrTxpow(DR_SF7,14);
+    LMIC_setDrTxpow(DR_SF8, 20); 
     LMIC_selectSubBand(6);
 
     // Start job (sending automatically starts OTAA too)
