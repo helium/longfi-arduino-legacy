@@ -49,9 +49,9 @@
 # warning "You must replace the values marked FILLMEIN with real values from the TTN control panel!"# define FILLMEIN (#dont edit this, edit the lines that use FILLMEIN)
 #endif
 
-// This EUI must be in little-endian format, so least-significant-byte
+// This EUI must be in little-endian (LSB) format, so least-significant-byte
 // first. When copying an EUI from Helium console output, this means
-// you want to display the AppEUI bytewise in "lsb" mode
+// you want to display the AppEUI as comma seperated bytes in "lsb" mode
 static const u1_t PROGMEM APPEUI[8]= { FILL_ME_IN };
 void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
 
@@ -60,9 +60,10 @@ void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
 static const u1_t PROGMEM DEVEUI[8]= { FILL_ME_IN };
 void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
 
-// This key should be in big endian format (or, since it is not really a
-// number but a block of memory, endianness does not really apply). In
-// practice, a key taken from the Helium console can be copied as-is.
+// This key should be in big endian (MSB) format (or, since it is not really a
+// number but a block of memory, endianness does not really apply). When copying 
+// an AppKey from Helium console output, this means you want to display the AppKey 
+// as comma seperated bytes in "msb" mode
 static const u1_t PROGMEM APPKEY[16] = { FILL_ME_IN };
 void os_getDevKey (u1_t* buf) {  memcpy_P(buf, APPKEY, 16);}
 
