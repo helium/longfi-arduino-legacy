@@ -36,6 +36,8 @@
 #include <hal/hal.h>
 #include <SPI.h>
 
+#include "getpinmap_disco_l072cz_lrwan1.h"
+
 //
 // For normal use, we require that you edit the sketch to replace FILLMEIN
 // with values assigned by the TTN console. However, for regression tests,
@@ -120,18 +122,7 @@ const lmic_pinmap lmic_pins = {
 };
 #elif defined(ARDUINO_DISCO_L072CZ_LRWAN1)
 // Pin mapping Discovery 
-const lmic_pinmap lmic_pins = {
-        .nss =  RADIO_NSS_PORT,
-        .rxtx = 21,
-        .rst = RADIO_RESET_PORT,
-        .dio = { RADIO_DIO_0_PORT,    // DIO0 (IRQ) is D25
-                 RADIO_DIO_1_PORT,    // DIO1 is D26
-                 RADIO_DIO_2_PORT,    // DIO2 is D27
-               },
-        .rxtx_rx_active = 1,
-        .rssi_cal = 10,
-        .spi_freq = 8000000     // 8MHz
-};
+const lmic_pinmap lmic_pins = Arduino_LMIC::GetPinmap_Disco_L072cz_Lrwan1();
 #else
 # error "Unknown target"
 #endif
@@ -154,6 +145,9 @@ void onEvent (ev_t ev) {
             break;
         case EV_JOINING:
             Serial.println(F("EV_JOINING"));
+            break;
+        case EV_JOIN_TXCOMPLETE:
+            Serial.println(F("EV_JOIN_TXCOMPLETE"));
             break;
         case EV_JOINED:
             Serial.println(F("EV_JOINED"));

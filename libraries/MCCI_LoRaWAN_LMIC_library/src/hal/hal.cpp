@@ -424,8 +424,7 @@ ostime_t hal_setModuleActive (bit_t val) {
 }
 
 bit_t hal_queryUsingTcxo(void) {
-    // return pHalConfig->queryUsingTcxo();
-    return false;
+    return pHalConfig->queryUsingTcxo();
 }
 
 uint8_t hal_getTxPowerPolicy(
