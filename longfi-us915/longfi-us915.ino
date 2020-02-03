@@ -35,6 +35,14 @@
 #include <lmic.h>
 #include <hal/hal.h>
 #include <SPI.h>
+#include <Adafruit_GPS.h>
+
+#define GPSSerial Serial1
+
+#define CFG_sx1276_radio 1
+
+// Connect to the GPS on the hardware port
+Adafruit_GPS GPS(&GPSSerial);
 
 //
 // For normal use, we require that you edit the sketch to replace FILLMEIN
@@ -52,18 +60,18 @@
 // This EUI must be in little-endian format, so least-significant-byte
 // first. When copying an EUI from Helium console output, this means
 // you want to display the AppEUI bytewise in "lsb" mode
-static const u1_t PROGMEM APPEUI[8]= { FILL_ME_IN };
+static const u1_t PROGMEM APPEUI[8]= { FILLMEIN };
 void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
 
 // This should also be in little endian format
 // These are user configurable values and Helium console permits anything
-static const u1_t PROGMEM DEVEUI[8]= { FILL_ME_IN };
+static const u1_t PROGMEM DEVEUI[8]= { FILLMEIN };
 void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
 
 // This key should be in big endian format (or, since it is not really a
 // number but a block of memory, endianness does not really apply). In
 // practice, a key taken from the Helium console can be copied as-is.
-static const u1_t PROGMEM APPKEY[16] = { FILL_ME_IN };
+static const u1_t PROGMEM APPKEY[16] = { FILLMEIN };
 void os_getDevKey (u1_t* buf) {  memcpy_P(buf, APPKEY, 16);}
 
 static uint8_t mydata[] = "Hello, world!";
@@ -71,7 +79,7 @@ static osjob_t sendjob;
 
 // Schedule TX every this many seconds (might become longer due to duty
 // cycle limitations).
-const unsigned TX_INTERVAL = 60;
+const unsigned TX_INTERVAL = 5;
 
 // Pin mapping
 //
@@ -245,17 +253,54 @@ void do_send(osjob_t* j){
         Serial.println(F("OP_TXRXPEND, not sending"));
     } else {
         // Prepare upstream data transmission at the next possible time.
-        LMIC_setTxData2(1, mydata, sizeof(mydata)-1, 0);
+        static uint8_t payload[32];
+        uint8_t idx = 0;
+        uint32_t data;
+
+        if (GPS.newNMEAreceived()) {
+          GPS.parse(GPS.lastNMEA());
+        }
+        
+        if (GPS.fix) {
+          Serial.println(GPS.latitudeDegrees);
+          Serial.println(GPS.longitudeDegrees);
+          //data = GPS.latitude_fixed * (GPS.lat == 'N' ? 1 : -1) + 90 * 1E7;
+          data = (int)(GPS.latitudeDegrees * 1E7);
+          payload[idx++] = data >> 24;
+          payload[idx++] = data >> 16;
+          payload[idx++] = data >> 8;
+          payload[idx++] = data;
+          //data = GPS.longitude_fixed * (GPS.lon == 'E' ? 1 : -1) + 180 * 1E7;
+          data = (int)(GPS.longitudeDegrees * 1E7);
+          payload[idx++] = data >> 24;
+          payload[idx++] = data >> 16;
+          payload[idx++] = data >> 8;
+          payload[idx++] = data;
+          data = (int)(GPS.altitude + 0.5);
+          payload[idx++] = data >> 8;
+          payload[idx++] = data;
+          payload[idx++] = 0;
+          payload[idx++] = 0;
+        } else {
+          for (idx=0; idx<12; idx++) {
+            payload[idx] = 0;
+          }
+        }
+        //LMIC_setTxData2(1, mydata, sizeof(mydata)-1, 0);
         Serial.println(F("Packet queued"));
+        LMIC_setTxData2(1, payload, idx, 0);   
     }
+    //delay(20);
     // Next TX is scheduled after TX_COMPLETE event.
+    //os_setTimedCallback(&sendjob, os_getTime()+sec2osticks(TX_INTERVAL), do_send);
+     
 }
 
 void setup() {
     delay(5000);
-    while (! Serial)
-        ;
-    Serial.begin(9600);
+    //while (! Serial);
+    
+    Serial.begin(115200);
     Serial.println(F("Starting"));
 
     #ifdef VCC_ENABLE
@@ -270,14 +315,29 @@ void setup() {
     // Reset the MAC state. Session and pending data transfers will be discarded.
     LMIC_reset();
 
+    
+    LMIC_setAdrMode(0);
     LMIC_setLinkCheckMode(0);
-    LMIC_setDrTxpow(DR_SF7,14);
+    //LMIC_setDrTxpow(DR_SF7,14);
+    LMIC_setDrTxpow(DR_SF8, 20); // start at SF12
     LMIC_selectSubBand(6);
+
+      // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
+    GPS.begin(9600);
+    // Only interrested in GGA, no antenna status
+    GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+    GPS.sendCommand(PGCMD_NOANTENNA);
+  
+    // Update every second
+    GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ); // 1 Hz update rate
+       
+    
 
     // Start job (sending automatically starts OTAA too)
     do_send(&sendjob);
 }
 
 void loop() {
+    GPS.read();
     os_runloop_once();
 }
