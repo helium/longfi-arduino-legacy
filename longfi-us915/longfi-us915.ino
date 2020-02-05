@@ -8,29 +8,9 @@
  * including, but not limited to, copying, modification and redistribution.
  * NO WARRANTY OF ANY KIND IS PROVIDED.
  *
- * This example sends a valid LoRaWAN packet with payload "Hello,
- * world!", using frequency and encryption settings matching those of
- * the The Things Network. It's pre-configured for the Adafruit
- * Feather M0 LoRa.
- *
- * This uses OTAA (Over-the-air activation), where where a DevEUI and
- * application key is configured, which are used in an over-the-air
- * activation procedure where a DevAddr and session keys are
- * assigned/generated for use with all further communication.
- *
- * Note: LoRaWAN per sub-band duty-cycle limitation is enforced (1% in
- * g1, 0.1% in g2), but not the TTN fair usage policy (which is probably
- * violated by this sketch when left running for longer)!
-
- * To use this sketch, first register your application and device with
- * the things network, to set or generate an AppEUI, DevEUI and AppKey.
- * Multiple devices can use the same AppEUI, but each device has its own
- * DevEUI and AppKey.
- *
- * Do not forget to define the radio type correctly in
- * arduino-lmic/project_config/lmic_project_config.h or from your BOARDS.txt.
- *
  *******************************************************************************/
+
+// for Helium, see the setup page: https://developer.helium.com/device/arduino-quickstart
 
 #include <lmic.h>
 #include <arduino_lmic_hal_configuration.h>
@@ -41,36 +21,19 @@
 #include <hal/hal.h>
 #include <SPI.h>
 
-//
-// For normal use, we require that you edit the sketch to replace FILLMEIN
-// with values assigned by the TTN console. However, for regression tests,
-// we want to be able to compile these scripts. The regression tests define
-// COMPILE_REGRESSION_TEST, and in that case we define FILLMEIN to a non-
-// working but innocuous value.
-//
-#ifdef COMPILE_REGRESSION_TEST
-# define FILL_ME_IN 0
-#else
-# warning "You must replace the values marked FILLMEIN with real values from the TTN control panel!"# define FILLMEIN (#dont edit this, edit the lines that use FILLMEIN)
-#endif
 
-// This EUI must be in little-endian (LSB) format, so least-significant-byte
-// first. When copying an EUI from Helium console output, this means
-// you want to display the AppEUI as comma seperated bytes in "lsb" mode
+// get this from the Helium Console
 static const u1_t PROGMEM APPEUI[8]= { FILL_ME_IN };
 void os_getArtEui (u1_t* buf) { memcpy_P(buf, APPEUI, 8);}
 
-// This should also be in little endian format
-// These are user configurable values and Helium console permits anything
-static const u1_t PROGMEM DEVEUI[8]= { FILL_ME_IN };
-void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
-
-// This key should be in big endian (MSB) format (or, since it is not really a
-// number but a block of memory, endianness does not really apply). When copying 
-// an AppKey from Helium console output, this means you want to display the AppKey 
-// as comma seperated bytes in "msb" mode
+// get this from the Helium Console
 static const u1_t PROGMEM APPKEY[16] = { FILL_ME_IN };
 void os_getDevKey (u1_t* buf) {  memcpy_P(buf, APPKEY, 16);}
+
+// magic value hardcoded for Helium
+static const u1_t PROGMEM DEVEUI[8]= {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED, 0xFF, 0xFF };
+void os_getDevEui (u1_t* buf) { memcpy_P(buf, DEVEUI, 8);}
+
 
 static uint8_t mydata[] = "Hello, world!";
 static osjob_t sendjob;
